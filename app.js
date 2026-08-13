@@ -688,6 +688,22 @@ function applyTheme(t){
   overlay.addEventListener('click',function(e){ if(e.target===overlay) closeModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
 })();
+
+/* 移动端汉堡菜单：点击展开/收起下拉 */
+(function setupMenu(){
+  const btn = document.getElementById('menuBtn');
+  const links = document.getElementById('navLinks');
+  if(!btn || !links) return;
+  function close(){ links.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  function toggle(){ const open = links.classList.toggle('open'); btn.setAttribute('aria-expanded', open?'true':'false'); }
+  btn.addEventListener('click',function(e){ e.stopPropagation(); toggle(); });
+  links.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',close); });
+  document.addEventListener('click',function(e){
+    if(links.classList.contains('open') && !(e.target.closest && e.target.closest('.nav'))) close();
+  });
+  window.addEventListener('hashchange',close);
+  window.addEventListener('resize',function(){ if(window.innerWidth>860) close(); });
+})();
 renderFeatures();
 renderTestimonials();
 renderFaq();
