@@ -1,0 +1,11 @@
+# 隐私/本地目录（含项目记忆，勿上传）
+.workbuddy/
+
+# Netlify Drop 发布快照（源文件在根目录，部署直接用根目录）
+public/
+
+# 单文件备份
+index.single.bak.html
+
+# macOS 冗余文件
+.DS_Store

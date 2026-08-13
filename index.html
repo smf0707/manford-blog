@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manford 手记 · 设计、代码与未来</title>
+  <meta name="description" content="一个关于设计、代码与未来科技的个人博客，未来玻璃风格，单文件原生构建。" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="bg-aurora" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- ============ 导航 ============ -->
+  <header class="nav glass">
+    <a class="brand" href="#/home" data-link>
+      <span class="logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7C3AED" />
+              <stop offset="1" stop-color="#EC4899" />
+            </linearGradient>
+          </defs>
+          <circle cx="20" cy="20" r="16" stroke="url(#lg)" stroke-width="2.4" />
+          <circle cx="20" cy="20" r="6.5" fill="url(#lg)" />
+          <circle cx="33" cy="11" r="2.6" fill="#06B6D4" />
+          <ellipse cx="20" cy="20" rx="16" ry="6.5" stroke="#06B6D4" stroke-width="1.4" transform="rotate(28 20 20)"
+            opacity=".8" />
+        </svg>
+      </span>
+      <span>Manford 手记<small>DESIGN · CODE · FUTURE</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#/home" data-link data-view="home">首页</a>
+      <a href="#/articles" data-link data-view="articles">文章</a>
+      <a href="#/tags" data-link data-view="tags">标签</a>
+      <a href="#/work" data-link data-view="work">作品集</a>
+      <a href="#/about" data-link data-view="about">关于</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="切换主题" title="切换亮暗">
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
+        </svg>
+      </button>
+      <a class="btn btn-primary nav-cta" href="#/articles" data-link>开始阅读
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ 首页 ============ -->
+    <section class="view active" id="view-home">
+      <div class="wrap">
+        <!-- Hero -->
+        <div class="hero">
+          <div class="hero-grid">
+            <div>
+              <span class="pill reveal"><span class="dot"></span>个人博客 · 由原生代码驱动</span>
+              <h1 class="reveal">在<span class="grad-text">代码</span>与<span class="grad-text">设计</span>之间，<br />写下未来的注脚。
+              </h1>
+              <p class="lead reveal">Manford 手记记录一个设计师兼开发者对界面、动效与技术的思考。无框架依赖，单文件即开即用，像玻璃一样通透。</p>
+              <div class="hero-cta reveal">
+                <a class="btn btn-primary" href="#/articles" data-link>浏览文章
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </a>
+                <a class="btn btn-ghost" href="#/about" data-link>了解我</a>
+              </div>
+              <div class="hero-stats reveal">
+                <div>
+                  <div class="num grad-text">42</div>
+                  <div class="lbl">篇已发布文章</div>
+                </div>
+                <div>
+                  <div class="num grad-text">9</div>
+                  <div class="lbl">个主题专栏</div>
+                </div>
+                <div>
+                  <div class="num grad-text">0</div>
+                  <div class="lbl">外部依赖</div>
+                </div>
+              </div>
+            </div>
+            <div class="mockup-stage reveal">
+              <div class="mockup">
+                <div class="bar"><i></i><i></i><i></i></div>
+                <span class="tag">设计 · 前端</span>
+                <h3>用 Glassmorphism 重塑阅读体验</h3>
+                <div class="line w90"></div>
+                <div class="line w70"></div>
+                <div class="line w50"></div>
+                <div class="mini">
+                  <div class="chip"></div>
+                  <div class="chip"></div>
+                  <div class="chip"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 特性网格 3x3 -->
+        <div class="section">
+          <div class="sec-head reveal">
+            <span class="pill"><span class="dot"></span>为什么是 Manford</span>
+            <h2>为长期书写而生的九个细节</h2>
+            <p>从渲染管线到动效节奏，每一处都用原生实现，干净、可控、可移植。</p>
+          </div>
+          <div class="feat-grid" id="featGrid"></div>
+        </div>
+
+        <!-- 评价轮播 -->
+        <div class="section">
+          <div class="sec-head reveal">
+            <span class="pill"><span class="dot"></span>读者说</span>
+            <h2>被这些创作者收藏</h2>
+            <p>他们用 Manford 的笔记，喂饱了自己的下一个项目。</p>
+          </div>
+          <div class="carousel reveal" id="carousel">
+            <div class="c-track" id="cTrack"></div>
+          </div>
+          <div class="c-dots" id="cDots"></div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+          <div class="sec-head reveal">
+            <span class="pill"><span class="dot"></span>常见问题</span>
+            <h2>关于这个博客，你可能想问</h2>
+          </div>
+          <div class="faq" id="faq"></div>
+        </div>
+      </div>
+
+      <!-- 底部订阅 -->
+      <footer class="footer">
+        <div class="wrap">
+          <div class="sub-card glass reveal">
+            <h2>订阅 <span class="grad-text">Manford 周记</span></h2>
+            <p>每周一封，只发真正值得读的设计与代码笔记。随时退订。</p>
+            <form class="sub-form" id="subForm" novalidate>
+              <input type="email" id="subEmail" placeholder="你的邮箱地址" aria-label="邮箱地址" />
+              <button class="btn btn-primary" type="submit" id="subBtn">订阅
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+            </form>
+          </div>
+          <div class="foot-bottom">
+            <span>© 2026 Manford 手记 · 用一颗安静的心写代码</span>
+            <div class="foot-social">
+              <a href="#/about" data-link aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                </svg></a>
+              <a href="#/about" data-link aria-label="网站"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg></a>
+              <a href="#/about" data-link aria-label="邮件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </section>
+
+    <!-- ============ 文章列表 ============ -->
+    <section class="view" id="view-articles">
+      <div class="wrap">
+        <div class="sec-head reveal" style="text-align:left;max-width:none;margin-bottom:30px">
+          <span class="pill"><span class="dot"></span>文章档案</span>
+          <h2>所有笔记</h2>
+          <p>点击任意卡片进入正文，支持 Markdown 渲染。</p>
+        </div>
+        <div class="posts-layout">
+          <aside class="tag-side reveal">
+            <h4>按标签筛选</h4>
+            <div class="tag-list" id="sideTags"></div>
+          </aside>
+          <div class="posts-grid" id="postsGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 文章详情 ============ -->
+    <section class="view" id="view-article">
+      <div class="wrap">
+        <article class="article" id="articleBox"></article>
+      </div>
+    </section>
+
+    <!-- ============ 标签 ============ -->
+    <section class="view" id="view-tags">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="pill"><span class="dot"></span>标签地图</span>
+          <h2>从这些主题出发</h2>
+          <p>每个标签都是一条线索，点开后直达对应文章。</p>
+        </div>
+        <div class="tags-cloud" id="tagsCloud"></div>
+      </div>
+    </section>
+
+    <!-- ============ 关于 ============ -->
+    <section class="view" id="view-about">
+      <div class="wrap">
+        <div class="about-grid">
+          <div class="about-art reveal" aria-hidden="true">
+            <span class="ring"></span><span class="ring r2"></span>
+            <span class="orb a"></span><span class="orb b"></span>
+          </div>
+          <div class="reveal">
+            <span class="pill"><span class="dot"></span>关于我</span>
+            <h2>我是Manford，<br />一个在设计与代码之间游走的开发者。</h2>
+            <p>白天写界面，夜里写笔记。我相信好的工具应当像玻璃：你透过它看见内容，却几乎感觉不到它的存在。这个博客就是为了记录那些「差点被忽略的细节」而存在。</p>
+            <p>本站完全由原生 HTML、CSS 与 JavaScript 写成，没有框架，没有外部请求，一个文件就能带着走。</p>
+            <div class="skills">
+              <span class="skill">设计系统</span>
+              <span class="skill">前端工程</span>
+              <span class="skill">动效设计</span>
+              <span class="skill">SVG 图形</span>
+              <span class="skill">可访问性</span>
+              <span class="skill">性能优化</span>
+            </div>
+            <a class="btn btn-primary" href="#/articles" data-link>读我的文章
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 作品集 ============ -->
+    <section class="view" id="view-work">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="pill"><span class="dot"></span>作品集</span>
+          <h2>设计与代码，都可以被看见</h2>
+          <p>三大方向，十八个代表性项目。点开任意卡片，看背后的思考。</p>
+        </div>
+        <div class="work-tabs reveal" id="workTabs"></div>
+        <div class="work-grid" id="workGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 作品详情弹窗 ============ -->
+  <div class="modal-overlay" id="modal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-label="作品详情">
+      <button class="modal-close" id="modalClose" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-cover" id="modalCover"></div>
+      <div class="modal-body">
+        <div class="modal-meta" id="modalMeta"></div>
+        <h3 id="modalTitle"></h3>
+        <p class="modal-intro" id="modalIntro"></p>
+        <p class="modal-detail" id="modalDetail"></p>
+        <a class="btn btn-primary modal-link" id="modalLink" target="_blank" rel="noopener">访问项目
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg></span>
+    <span id="toastMsg">已订阅，欢迎来到 Manford。</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
