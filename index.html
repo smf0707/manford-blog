@@ -102,21 +102,6 @@
                 </div>
               </div>
             </div>
-            <div class="mockup-stage reveal">
-              <div class="mockup">
-                <div class="bar"><i></i><i></i><i></i></div>
-                <span class="tag">设计 · 前端</span>
-                <h3>用 Glassmorphism 重塑阅读体验</h3>
-                <div class="line w90"></div>
-                <div class="line w70"></div>
-                <div class="line w50"></div>
-                <div class="mini">
-                  <div class="chip"></div>
-                  <div class="chip"></div>
-                  <div class="chip"></div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -314,6 +299,56 @@
         <polyline points="20 6 9 17 4 12" />
       </svg></span>
     <span id="toastMsg">已订阅，欢迎来到 Manford。</span>
+  </div>
+
+  <!-- 悬浮 AI 伙伴 -->
+  <div class="bot-fab" id="botFab" role="button" tabindex="0" aria-label="打开 AI 伙伴对话">
+    <svg class="bot-fab-svg" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <linearGradient id="fabGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="rb-hg-1"/>
+          <stop offset="1" class="rb-hg-2"/>
+        </linearGradient>
+        <filter id="fabGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="fabRobot">
+        <line x1="60" y1="40" x2="60" y2="26" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="60" cy="22" r="5" class="rb-antenna" filter="url(#fabGlow)"/>
+        <rect x="26" y="40" width="68" height="62" rx="22" fill="url(#fabGrad)"/>
+        <rect x="26" y="40" width="68" height="62" rx="22" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+        <g class="bot-eye">
+          <circle cx="48" cy="66" r="9" fill="#0B0D1F"/>
+          <circle class="bot-pupil rb-eye-color" cx="48" cy="66" r="4"/>
+        </g>
+        <g class="bot-eye">
+          <circle cx="72" cy="66" r="9" fill="#0B0D1F"/>
+          <circle class="bot-pupil rb-eye-color" cx="72" cy="66" r="4"/>
+        </g>
+        <path d="M50 84 Q60 92 70 84" fill="none" stroke="#0B0D1F" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <span class="bot-fab-pulse"></span>
+  </div>
+
+  <!-- AI 伙伴对话面板 -->
+  <div class="bot-panel" id="botPanel" aria-hidden="true">
+    <div class="bot-panel-head">
+      <div class="bot-panel-title">
+        <span class="bot-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 8V4M9 2h6"/><circle cx="9.5" cy="14" r="1.3" fill="#fff" stroke="none"/><circle cx="14.5" cy="14" r="1.3" fill="#fff" stroke="none"/></svg></span>
+        <div><strong>AI 伙伴</strong><small>在线 · 演示对话</small></div>
+      </div>
+      <button class="bot-close" id="botClose" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="bot-msgs" id="botMsgs"></div>
+    <form class="bot-input" id="botForm">
+      <input type="text" id="botText" placeholder="说点什么…" aria-label="输入消息" autocomplete="off" />
+      <button type="submit" class="btn btn-primary">发送</button>
+    </form>
   </div>
 
   <script src="app.js"></script>

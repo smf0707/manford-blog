@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 伙伴 · 互动机器人脸</title>
+<style>
+  :root{
+    --bg:#0A0B1A;
+    --violet:#7C3AED;
+    --pink:#EC4899;
+    --cyan:#06B6D4;
+    --grad:linear-gradient(135deg,#7C3AED 0%,#EC4899 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    background:var(--bg);color:#F8FAFC;min-height:100vh;
+    display:grid;place-items:center;overflow:hidden;
+    background:
+      radial-gradient(60vw 60vw at 20% -10%,rgba(124,58,237,.35),transparent 60%),
+      radial-gradient(55vw 55vw at 100% 110%,rgba(236,72,153,.30),transparent 60%),
+      var(--bg);
+  }
+  .stage{display:flex;flex-direction:column;align-items:center;gap:26px}
+  .card{
+    position:relative;width:min(90vw,380px);aspect-ratio:1/1;border-radius:32px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.7);
+    display:grid;place-items:center;overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;
+    background:radial-gradient(120% 90% at 50% 0%,rgba(124,58,237,.18),transparent 55%);
+    pointer-events:none;
+  }
+  svg.robot{width:82%;height:82%;display:block;overflow:visible}
+  /* 头部随光标偏转 */
+  #robot{transform-box:fill-box;transform-origin:center;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+  /* 呼吸浮动 */
+  #breathe{transform-box:fill-box;transform-origin:center;animation:breathe 4.5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+  /* 眨眼 */
+  .eye{transform-box:fill-box;transform-origin:center;transition:transform .09s ease}
+  .eye.blink{transform:scaleY(.07)}
+  /* 说话 */
+  .mouth{transform-box:fill-box;transform-origin:center}
+  .mouth.talking{animation:talk .34s ease-in-out infinite}
+  @keyframes talk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+  .label{font-size:15px;color:#94A3B8;letter-spacing:.5px}
+  .label b{color:#F8FAFC;font-weight:600}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;
+    font-family:inherit;font-size:14.5px;font-weight:600;padding:11px 22px;border-radius:12px;
+    background:var(--grad);color:#fff;box-shadow:0 12px 30px -10px rgba(236,72,153,.6);
+    transition:transform .25s ease,box-shadow .25s ease;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(236,72,153,.7)}
+  .btn.off{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);box-shadow:none}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="card">
+      <svg class="robot" viewBox="0 0 400 400" aria-label="互动机器人脸">
+        <defs>
+          <linearGradient id="headGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7C3AED"/>
+            <stop offset="1" stop-color="#EC4899"/>
+          </linearGradient>
+          <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#EC4899" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#EC4899" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <g id="robot">
+          <g id="breathe">
+            <!-- 天线 -->
+            <line x1="200" y1="92" x2="200" y2="58" stroke="rgba(255,255,255,.4)" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="200" cy="50" r="11" fill="#06B6D4" filter="url(#glow)"/>
+            <!-- 头 -->
+            <rect x="92" y="92" width="216" height="216" rx="58" fill="url(#headGrad)"/>
+            <rect x="92" y="92" width="216" height="216" rx="58" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+            <!-- 脸颊光晕 -->
+            <circle cx="138" cy="232" r="34" fill="url(#cheek)"/>
+            <circle cx="262" cy="232" r="34" fill="url(#cheek)"/>
+            <!-- 左眼 -->
+            <g class="eye" id="eyeL">
+              <circle cx="156" cy="186" r="34" fill="#0B0D1F" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+              <g class="pupil" id="pupilL">
+                <circle cx="156" cy="186" r="15" fill="#06B6D4" filter="url(#glow)"/>
+                <circle cx="151" cy="181" r="4.5" fill="#fff"/>
+              </g>
+            </g>
+            <!-- 右眼 -->
+            <g class="eye" id="eyeR">
+              <circle cx="244" cy="186" r="34" fill="#0B0D1F" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+              <g class="pupil" id="pupilR">
+                <circle cx="244" cy="186" r="15" fill="#06B6D4" filter="url(#glow)"/>
+                <circle cx="239" cy="181" r="4.5" fill="#fff"/>
+              </g>
+            </g>
+            <!-- 嘴 -->
+            <path class="mouth" id="mouth" d="M158 250 Q200 286 242 250" fill="none" stroke="#0B0D1F" stroke-width="9" stroke-linecap="round"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="label">你好，我是你的 <b>AI 伙伴</b>，移动鼠标逗逗我～</div>
+    <button class="btn" id="talkBtn">让它说话</button>
+  </div>
+
+<script>
+(function(){
+  const svg   = document.querySelector('svg.robot');
+  const robot = document.getElementById('robot');
+  const pupilL= document.getElementById('pupilL');
+  const pupilR= document.getElementById('pupilR');
+  const eyeL  = document.getElementById('eyeL');
+  const eyeR  = document.getElementById('eyeR');
+  const mouth = document.getElementById('mouth');
+  const talkBtn=document.getElementById('talkBtn');
+
+  // 眼睛跟随光标 + 头部偏转
+  function onMove(e){
+    const r = svg.getBoundingClientRect();
+    const cx = r.left + r.width/2;
+    const cy = r.top + r.height/2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const ang = Math.atan2(dy,dx);
+    const dist = Math.min(1, Math.hypot(dx,dy)/320);
+    const ox = Math.cos(ang)*dist*11;
+    const oy = Math.sin(ang)*dist*11;
+    pupilL.setAttribute('transform','translate('+ox+','+oy+')');
+    pupilR.setAttribute('transform','translate('+ox+','+oy+')');
+    const tilt = Math.max(-7, Math.min(7, dx/45));
+    robot.style.transform = 'rotate('+tilt+'deg)';
+  }
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', function(e){
+    if(e.touches[0]) onMove(e.touches[0]);
+  }, {passive:true});
+
+  // 随机眨眼
+  function blink(){
+    eyeL.classList.add('blink');
+    eyeR.classList.add('blink');
+    setTimeout(function(){ eyeL.classList.remove('blink'); eyeR.classList.remove('blink'); }, 130);
+  }
+  (function scheduleBlink(){
+    const t = 1800 + Math.random()*4200;
+    setTimeout(function(){ blink(); scheduleBlink(); }, t);
+  })();
+
+  // 说话动画开关
+  let talking = false;
+  talkBtn.addEventListener('click', function(){
+    talking = !talking;
+    mouth.classList.toggle('talking', talking);
+    talkBtn.textContent = talking ? '闭嘴' : '让它说话';
+    talkBtn.classList.toggle('off', talking);
+  });
+})();
+</script>
+</body>
+</html>

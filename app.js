@@ -732,9 +732,135 @@ function applyTheme(t){
   window.addEventListener('hashchange',close);
   window.addEventListener('resize',function(){ if(window.innerWidth>860) close(); });
 })();
+
+/* ============================================================
+   悬浮 AI 伙伴 + 对话面板（前端模拟对话）
+   ============================================================ */
+function initBot(){
+  const fab = document.getElementById('botFab');
+  const panel = document.getElementById('botPanel');
+  const closeBtn = document.getElementById('botClose');
+  const form = document.getElementById('botForm');
+  const input = document.getElementById('botText');
+  const msgs = document.getElementById('botMsgs');
+  if(!fab || !panel) return;
+
+  const eyes = fab.querySelectorAll('.bot-eye');
+  const pupils = fab.querySelectorAll('.bot-pupil');
+
+  // 眨眼
+  (function scheduleBlink(){
+    setTimeout(function(){
+      eyes.forEach(function(el){ el.classList.add('blink'); });
+      setTimeout(function(){ eyes.forEach(function(el){ el.classList.remove('blink'); }); }, 130);
+      scheduleBlink();
+    }, 1800 + Math.random()*4200);
+  })();
+
+  // 眼睛跟随光标
+  window.addEventListener('mousemove', function(e){
+    const r = fab.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    const dx = e.clientX - cx, dy = e.clientY - cy;
+    const ang = Math.atan2(dy,dx);
+    const dist = Math.min(1, Math.hypot(dx,dy)/200);
+    const ox = Math.cos(ang)*dist*4, oy = Math.sin(ang)*dist*4;
+    pupils.forEach(function(p){ p.setAttribute('transform','translate('+ox+','+oy+')'); });
+  });
+
+  // 开关面板
+  let greeted = false;
+  function openPanel(){
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden','false');
+    fab.classList.add('hidden');
+    if(input) input.focus();
+    if(!greeted){
+      greeted = true;
+      setTimeout(function(){ botSay('嗨，我是你的 AI 伙伴小记。想了解这个博客，或者随便聊点什么，都可以问我～'); }, 320);
+    }
+  }
+  function closePanel(){
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden','true');
+    fab.classList.remove('hidden');
+  }
+  fab.addEventListener('click', openPanel);
+  fab.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openPanel(); } });
+  if(closeBtn) closeBtn.addEventListener('click', closePanel);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && panel.classList.contains('open')) closePanel(); });
+
+  // 消息渲染
+  function botSay(text){
+    const div = document.createElement('div');
+    div.className = 'bot-msg bot';
+    const b = document.createElement('div');
+    b.className = 'bot-bubble';
+    div.appendChild(b);
+    msgs.appendChild(div);
+    let i = 0;
+    (function type(){
+      b.textContent = text.slice(0, i);
+      msgs.scrollTop = msgs.scrollHeight;
+      if(i <= text.length){ i++; setTimeout(type, 22); }
+    })();
+  }
+  function userSay(text){
+    const div = document.createElement('div');
+    div.className = 'bot-msg user';
+    const b = document.createElement('div');
+    b.className = 'bot-bubble';
+    b.textContent = text;
+    div.appendChild(b);
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  // 智谱大模型代理地址：部署 Cloudflare Worker 后，把下面改成你的地址（例如 https://xxx.workers.dev/chat）
+  const CHAT_API = 'https://YOUR-WORKER.workers.dev/chat';
+  // 对话历史：携带上下文给模型；system 仅用于设定角色，不展示给用户
+  const history = [
+    { role:'system', content:'你是 Manford 个人博客的 AI 助手，名字叫「小记」。回答简洁、友好、口语化，使用中文。可以介绍博客的文章、作品集、主题切换等功能，但不要编造具体数字或不存在的内容。' }
+  ];
+
+  if(form){
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const v = input.value.trim();
+      if(!v || input.disabled) return;
+      userSay(v);
+      input.value = '';
+      // 还没配置代理，先提示，避免无效请求
+      if(CHAT_API.indexOf('YOUR-WORKER') !== -1){
+        botSay('AI 代理还没配置好：请在 app.js 把 CHAT_API 改成你的 Worker 地址，并部署 Cloudflare Worker（详见 cloudflare-worker/ 里的说明）。');
+        return;
+      }
+      input.disabled = true;
+      try{
+        history.push({ role:'user', content:v });
+        const resp = await fetch(CHAT_API, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ messages: history })
+        });
+        const data = await resp.json();
+        if(!resp.ok || data.error) throw new Error(data.error || ('HTTP '+resp.status));
+        const text = data.reply || '（没有收到回复）';
+        history.push({ role:'assistant', content:text });
+        botSay(text);
+      }catch(err){
+        botSay('（连接 AI 失败了：' + err.message + '）请确认 Worker 已部署、CHAT_API 已填对。');
+      }finally{
+        input.disabled = false;
+        input.focus();
+      }
+    });
+  }
+}
+
 renderFeatures();
 renderTestimonials();
 renderFaq();
 setupCarouselDrag();
 router();
 startAuto();
+initBot();

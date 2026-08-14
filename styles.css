@@ -211,7 +211,7 @@
 
   /* ===== Hero ===== */
   .hero{padding:40px 0 70px}
-  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+  .hero-grid{display:block}
   .pill{
     display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;
     padding:7px 14px;border-radius:999px;background:var(--grad-soft);border:1px solid var(--hairline);
@@ -250,7 +250,63 @@
   .mockup .line.w70{width:70%}.mockup .line.w90{width:90%}.mockup .line.w50{width:50%}
   .mockup .mini{margin-top:16px;display:flex;gap:10px}
   .mockup .mini .chip{flex:1;height:42px;border-radius:var(--radius-xs);background:var(--grad-soft);border:1px solid var(--hairline)}
-  @media(max-width:860px){.hero-grid{grid-template-columns:1fr}.mockup-stage{margin-top:30px}}
+  @media(max-width:860px){.hero{padding:32px 0 44px}}
+
+  /* ===== 悬浮 AI 伙伴（颜色跟随主题） ===== */
+  .rb-hg-1{stop-color:var(--violet)}
+  .rb-hg-2{stop-color:var(--pink)}
+  .rb-antenna{fill:var(--cyan)}
+  .rb-eye-color{fill:var(--cyan)}
+
+  /* 右下角悬浮小机器人 */
+  .bot-fab{
+    position:fixed;right:16px;bottom:16px;z-index:70;width:54px;height:54px;border-radius:50%;
+    background:var(--grad);border:1px solid var(--hairline);cursor:pointer;
+    box-shadow:0 18px 40px -12px rgba(236,72,153,.55);
+    display:grid;place-items:center;
+    transition:transform .3s ease,box-shadow .3s ease,opacity .3s ease;
+  }
+  .bot-fab:hover{transform:translateY(-3px) scale(1.05)}
+  .bot-fab.hidden{opacity:0;pointer-events:none;transform:scale(.5)}
+  .bot-fab-svg{width:80%;height:80%;display:block;overflow:visible}
+  #fabRobot{transform-box:fill-box;transform-origin:center;animation:rb-breathe 4.5s ease-in-out infinite}
+  @keyframes rb-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .bot-eye{transform-box:fill-box;transform-origin:center;transition:transform .09s ease}
+  .bot-eye.blink{transform:scaleY(.08)}
+  .bot-fab-pulse{position:absolute;inset:0;border-radius:50%;border:2px solid var(--pink);opacity:0;animation:botPulse 2.4s ease-out infinite}
+  @keyframes botPulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.5);opacity:0}}
+
+  /* 对话面板 */
+  .bot-panel{
+    position:fixed;right:16px;bottom:16px;z-index:85;width:min(360px,calc(100vw - 32px));
+    height:min(520px,calc(100vh - 48px));border-radius:var(--radius);
+    background:var(--menu-bg);border:1px solid var(--hairline);
+    backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);
+    box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
+    opacity:0;visibility:hidden;transform:translateY(20px) scale(.96);
+    transition:opacity .3s ease,transform .3s ease,visibility .3s ease;
+  }
+  .bot-panel.open{opacity:1;visibility:visible;transform:none}
+  .bot-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px;border-bottom:1px solid var(--hairline)}
+  .bot-panel-title{display:flex;align-items:center;gap:11px;min-width:0}
+  .bot-avatar{width:40px;height:40px;border-radius:50%;background:var(--grad);display:grid;place-items:center;flex:0 0 auto}
+  .bot-avatar svg{width:23px;height:23px}
+  .bot-panel-title strong{display:block;font-size:15px;line-height:1.2}
+  .bot-panel-title small{font-size:12px;color:var(--muted)}
+  .bot-close{width:34px;height:34px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;border:1px solid var(--hairline);background:var(--glass);color:var(--text);cursor:pointer;transition:transform .25s ease}
+  .bot-close:hover{transform:rotate(90deg)}
+  .bot-close svg{width:17px;height:17px}
+  .bot-msgs{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .bot-msg{display:flex}
+  .bot-msg.user{justify-content:flex-end}
+  .bot-bubble{max-width:82%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+  .bot-msg.bot .bot-bubble{background:var(--glass-strong);border:1px solid var(--hairline);border-bottom-left-radius:5px}
+  .bot-msg.user .bot-bubble{background:var(--grad);color:#fff;border-bottom-right-radius:5px}
+  .bot-input{display:flex;gap:9px;padding:13px;border-top:1px solid var(--hairline)}
+  .bot-input input{flex:1;min-width:0;padding:11px 14px;border-radius:var(--radius-xs);background:var(--bg-2);border:1px solid var(--hairline);color:var(--text);font-family:var(--font);font-size:14px}
+  .bot-input input:focus{outline:none;border-color:var(--violet)}
+  .bot-input .btn{padding:11px 16px}
+  @media(max-width:860px){.bot-fab,.bot-panel{right:12px;bottom:12px}}
 
   /* ===== Section 通用 ===== */
   .section{padding:74px 0}
