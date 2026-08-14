@@ -456,7 +456,7 @@ function renderArticle(id){
     '<span class="back" id="backBtn"></span>'
     +'<h1>'+p.title+'</h1>'
     +'<div class="a-meta"><span>'+p.date+'</span><span class="a-tags">'+p.tags.map(function(t){return '<span class="a-tag">'+t+'</span>';}).join('')+'</span></div>'
-    +'<div class="markdown">'+mdToHtml(p.md)+'</div>'
+    +'<div class="markdown">'+mdToHtml(p.md.replace(/^#\s+[^\n]*\n+/, ''))+'</div>'
     +'<div class="a-nav">'
       + (prev?'<a href="#/article/'+prev.id+'" data-link><div class="lbl">上一篇</div><div class="ttl">'+prev.title+'</div></a>':'<span></span>')
       + (next?'<a href="#/article/'+next.id+'" data-link style="text-align:right"><div class="lbl">下一篇</div><div class="ttl">'+next.title+'</div></a>':'<span></span>')
