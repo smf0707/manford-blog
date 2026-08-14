@@ -624,23 +624,51 @@ function setupCarouselDrag(){
 }
 
 /* ============================================================
-   主题切换（暗色默认，亮色可切，持久化）
+   主题切换：白天 / 黑夜 / 绿金，弹窗选择，持久化
    ============================================================ */
+const THEME_ICONS = {
+  dark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>',
+  light:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+  green:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>'
+};
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   const btn = document.getElementById('themeBtn');
-  btn.innerHTML = (t==='dark') ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+  if(btn) btn.innerHTML = THEME_ICONS[t] || THEME_ICONS.dark;
+  document.querySelectorAll('.theme-opt').forEach(function(o){
+    o.classList.toggle('active', o.getAttribute('data-theme-opt')===t);
+  });
+  try{ localStorage.setItem('nebula-theme',t); }catch(e){}
 }
 (function initTheme(){
-  let saved = null;
-  try{ saved = localStorage.getItem('nebula-theme'); }catch(e){}
-  applyTheme(saved==='light'?'light':'dark');
-  document.getElementById('themeBtn').addEventListener('click',function(){
-    const cur = document.documentElement.getAttribute('data-theme');
-    const next = cur==='dark'?'light':'dark';
-    applyTheme(next);
-    try{ localStorage.setItem('nebula-theme',next); }catch(e){}
+  let saved = 'dark';
+  try{ saved = localStorage.getItem('nebula-theme') || 'dark'; }catch(e){}
+  if(saved!=='light' && saved!=='dark' && saved!=='green') saved = 'dark';
+  applyTheme(saved);
+  const btn = document.getElementById('themeBtn');
+  const pop = document.getElementById('themePop');
+  if(!btn || !pop) return;
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    const open = pop.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open?'true':'false');
+  });
+  pop.querySelectorAll('.theme-opt').forEach(function(opt){
+    opt.addEventListener('click',function(){
+      applyTheme(opt.getAttribute('data-theme-opt'));
+      pop.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(pop.classList.contains('open') && e.target!==btn && !btn.contains(e.target) && !pop.contains(e.target)){
+      pop.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+    }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && pop.classList.contains('open')){
+      pop.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+    }
   });
 })();
 
