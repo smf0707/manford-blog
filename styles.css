@@ -319,7 +319,7 @@
   .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:860px){
     .feat-grid{grid-template-columns:1fr}
-    .feat{display:flex;flex-direction:row;align-items:flex-start;gap:14px}
+    .feat{display:flex;flex-direction:row;align-items:center;gap:14px}
     .feat .ic{margin-bottom:0;flex:0 0 auto}
     .feat-txt{flex:1 1 auto;min-width:0}
   }
