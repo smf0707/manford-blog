@@ -252,7 +252,7 @@
   .mockup .mini .chip{flex:1;height:42px;border-radius:var(--radius-xs);background:var(--grad-soft);border:1px solid var(--hairline)}
   @media(max-width:860px){.hero{padding:32px 0 44px}}
 
-  /* ===== 悬浮 AI 伙伴（颜色跟随主题） ===== */
+  /* ===== 悬浮 M仔小伙伴（颜色跟随主题） ===== */
   .rb-hg-1{stop-color:var(--violet)}
   .rb-hg-2{stop-color:var(--pink)}
   .rb-antenna{fill:var(--cyan)}

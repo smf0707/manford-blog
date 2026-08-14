@@ -734,7 +734,7 @@ function applyTheme(t){
 })();
 
 /* ============================================================
-   悬浮 AI 伙伴 + 对话面板（前端模拟对话）
+   悬浮 M仔小伙伴 + 对话面板（前端模拟对话）
    ============================================================ */
 function initBot(){
   const fab = document.getElementById('botFab');
@@ -777,7 +777,7 @@ function initBot(){
     if(input) input.focus();
     if(!greeted){
       greeted = true;
-      setTimeout(function(){ botSay('嗨，我是你的 AI 伙伴小记。想了解这个博客，或者随便聊点什么，都可以问我～'); }, 320);
+      setTimeout(function(){ botSay('嗨，我是你的 M仔小伙伴小记。想了解这个博客，或者随便聊点什么，都可以问我～'); }, 320);
     }
   }
   function closePanel(){
