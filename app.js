@@ -238,7 +238,7 @@ const COVER_GRADS = [
 /* 作品集：每块 5-10 个，这里各放 6 个示例，改文字即可换成你的真实项目 */
 const PROJECTS = [
   // UI 设计
-  {id:'ui-1',cat:'ui',title:'智能家居控制台',year:'2025',role:'交互设计 / 视觉',intro:'为全屋物联网设备设计的统一控制中枢，把碎片化的开关收敛成一张会呼吸的面板。',detail:'项目目标是让非技术用户也能在十秒内完成一次场景编排。我把设备按空间分组，用玻璃卡片承载状态，关键操作前置到首屏。后台数据通过实时通道同步，面板上的光点随设备在线状态明灭。最终版本将日均操作路径从 7 步压缩到 3 步。',link:'https://example.com/ui/smart-home'},
+  {id:'ui-1',cat:'ui',title:'智能家居控制台',year:'2025',role:'交互设计 / 视觉',cover:'image/zp1.jpeg',intro:'为全屋物联网设备设计的统一控制中枢，把碎片化的开关收敛成一张会呼吸的面板。',detail:'项目目标是让非技术用户也能在十秒内完成一次场景编排。我把设备按空间分组，用玻璃卡片承载状态，关键操作前置到首屏。后台数据通过实时通道同步，面板上的光点随设备在线状态明灭。最终版本将日均操作路径从 7 步压缩到 3 步。',link:'https://example.com/ui/smart-home'},
   {id:'ui-2',cat:'ui',title:'金融 App 资产改版',year:'2025',role:'产品设计',intro:'把复杂而冰冷的资产数字，讲成一个用户看得懂、信得过的故事。',detail:'原有界面堆满了表格，用户只看得到数字涨跌，看不到因果。我重做了信息层级：先用一张总览卡片建立安全感，再按持仓、流水、目标分三个入口。渐变用来区分风险等级，而不是为了好看。改版后月活留存提升了 18%。',link:'https://example.com/ui/finance'},
   {id:'ui-3',cat:'ui',title:'医疗预约流程',year:'2024',role:'UX / 流程设计',intro:'让挂号这件事，像点一次外卖一样简单、确定、不焦虑。',detail:'我梳理了从选科室到支付的 11 个节点，删掉了 4 个可有可无的确认页，把等待状态用进度条和预估时间显性化，减少用户的未知感。视觉上采用低饱和的蓝紫，传递冷静与专业。',link:'https://example.com/ui/medical'},
   {id:'ui-4',cat:'ui',title:'车载 HMI 概念',year:'2024',role:'概念设计',intro:'在驾驶这个高风险场景里，做一套只说重点、绝不抢戏的信息层。',detail:'车载界面最忌讳花哨。我把信息按紧急、常用、偶尔三级分层，只在必要时点亮，其余时间保持暗态。字号与对比度严格遵循夜间可读性规范，动效克制到几乎无感。',link:'https://example.com/ui/auto'},
@@ -471,6 +471,10 @@ function renderArticle(id){
    渲染：作品集
    ============================================================ */
 function coverHTML(p,idx){
+  if(p.cover){
+    return '<div class="w-cover"><img class="w-cover-img" src="'+p.cover+'" alt="'+p.title+'" loading="lazy">'
+      +'<span class="w-cover-cat">'+catName(p.cat)+'</span></div>';
+  }
   const g = COVER_GRADS[idx % COVER_GRADS.length];
   return '<div class="w-cover" style="background:'+g+'">'
     +'<div class="w-cover-deco">'+svg('grid')+'</div>'
@@ -516,8 +520,13 @@ function openModal(id){
   if(!p) return;
   const idx = PROJECTS.indexOf(p);
   const cover = document.getElementById('modalCover');
-  cover.style.background = COVER_GRADS[idx % COVER_GRADS.length];
-  cover.innerHTML = '<div class="w-cover-ic">'+svg(catIcon(p.cat))+'</div>';
+  if(p.cover){
+    cover.style.background = 'none';
+    cover.innerHTML = '<img class="w-cover-img" src="'+p.cover+'" alt="'+p.title+'">';
+  } else {
+    cover.style.background = COVER_GRADS[idx % COVER_GRADS.length];
+    cover.innerHTML = '<div class="w-cover-ic">'+svg(catIcon(p.cat))+'</div>';
+  }
   document.getElementById('modalMeta').innerHTML = '<span class="a-tag">'+catName(p.cat)+'</span><span>'+p.year+'</span><span>'+p.role+'</span>';
   document.getElementById('modalTitle').textContent = p.title;
   document.getElementById('modalIntro').textContent = p.intro;
