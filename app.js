@@ -364,7 +364,7 @@ function renderFeatures(){
   grid.innerHTML = FEATURES.map(function(f){
     return '<div class="feat reveal '+f.c+'">'
       +'<div class="ic">'+svg(f.icon)+'</div>'
-      +'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';
+      +'<div class="feat-txt"><h3>'+f.t+'</h3><p>'+f.d+'</p></div></div>';
   }).join('');
 }
 function renderTestimonials(){
