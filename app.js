@@ -239,25 +239,25 @@ const COVER_GRADS = [
 const PROJECTS = [
   // UI 设计
   {id:'ui-1',cat:'ui',title:'智能家居控制台',year:'2025',role:'交互设计 / 视觉',cover:'image/zp1.jpeg',intro:'为全屋物联网设备设计的统一控制中枢，把碎片化的开关收敛成一张会呼吸的面板。',detail:'项目目标是让非技术用户也能在十秒内完成一次场景编排。我把设备按空间分组，用玻璃卡片承载状态，关键操作前置到首屏。后台数据通过实时通道同步，面板上的光点随设备在线状态明灭。最终版本将日均操作路径从 7 步压缩到 3 步。',link:'https://example.com/ui/smart-home'},
-  {id:'ui-2',cat:'ui',title:'金融 App 资产改版',year:'2025',role:'产品设计',intro:'把复杂而冰冷的资产数字，讲成一个用户看得懂、信得过的故事。',detail:'原有界面堆满了表格，用户只看得到数字涨跌，看不到因果。我重做了信息层级：先用一张总览卡片建立安全感，再按持仓、流水、目标分三个入口。渐变用来区分风险等级，而不是为了好看。改版后月活留存提升了 18%。',link:'https://example.com/ui/finance'},
-  {id:'ui-3',cat:'ui',title:'医疗预约流程',year:'2024',role:'UX / 流程设计',intro:'让挂号这件事，像点一次外卖一样简单、确定、不焦虑。',detail:'我梳理了从选科室到支付的 11 个节点，删掉了 4 个可有可无的确认页，把等待状态用进度条和预估时间显性化，减少用户的未知感。视觉上采用低饱和的蓝紫，传递冷静与专业。',link:'https://example.com/ui/medical'},
-  {id:'ui-4',cat:'ui',title:'车载 HMI 概念',year:'2024',role:'概念设计',intro:'在驾驶这个高风险场景里，做一套只说重点、绝不抢戏的信息层。',detail:'车载界面最忌讳花哨。我把信息按紧急、常用、偶尔三级分层，只在必要时点亮，其余时间保持暗态。字号与对比度严格遵循夜间可读性规范，动效克制到几乎无感。',link:'https://example.com/ui/auto'},
-  {id:'ui-5',cat:'ui',title:'SaaS 数据看板',year:'2024',role:'界面设计',intro:'在高密度数据里，给用户留出一口呼吸的空间。',detail:'看板天然信息过载。我用留白和分组把二十多个指标拆成可扫读的区块，关键 KPI 用渐变高亮，次要数据退到浅灰。支持暗色，长时间盯屏不刺眼。',link:'https://example.com/ui/dashboard'},
-  {id:'ui-6',cat:'ui',title:'教育产品首页',year:'2023',role:'视觉 / 落地页',intro:'温暖、清晰、有引导感，让第一次来访的家长愿意留下来。',detail:'首页承担建立信任的第一棒。我用大留白和柔和渐变降低焦虑感，把怎么学、跟谁学、效果如何三段式讲清楚，CTA 用紫粉渐变保证可点击性。',link:'https://example.com/ui/edu'},
+  {id:'ui-2',cat:'ui',title:'金融 App 资产改版',year:'2025',role:'产品设计',intro:'把复杂而冰冷的资产数字，讲成一个用户看得懂、信得过的故事。',detail:'原有界面堆满了表格，用户只看得到数字涨跌，看不到因果。我重做了信息层级：先用一张总览卡片建立安全感，再按持仓、流水、目标分三个入口。渐变用来区分风险等级，而不是为了好看。改版后月活留存提升了 18%。',link:'https://example.com/ui/finance',cover:'image/cover-ui-2.jpg'},
+  {id:'ui-3',cat:'ui',title:'医疗预约流程',year:'2024',role:'UX / 流程设计',intro:'让挂号这件事，像点一次外卖一样简单、确定、不焦虑。',detail:'我梳理了从选科室到支付的 11 个节点，删掉了 4 个可有可无的确认页，把等待状态用进度条和预估时间显性化，减少用户的未知感。视觉上采用低饱和的蓝紫，传递冷静与专业。',link:'https://example.com/ui/medical',cover:'image/cover-ui-3.jpg'},
+  {id:'ui-4',cat:'ui',title:'车载 HMI 概念',year:'2024',role:'概念设计',intro:'在驾驶这个高风险场景里，做一套只说重点、绝不抢戏的信息层。',detail:'车载界面最忌讳花哨。我把信息按紧急、常用、偶尔三级分层，只在必要时点亮，其余时间保持暗态。字号与对比度严格遵循夜间可读性规范，动效克制到几乎无感。',link:'https://example.com/ui/auto',cover:'image/cover-ui-4.jpg'},
+  {id:'ui-5',cat:'ui',title:'SaaS 数据看板',year:'2024',role:'界面设计',intro:'在高密度数据里，给用户留出一口呼吸的空间。',detail:'看板天然信息过载。我用留白和分组把二十多个指标拆成可扫读的区块，关键 KPI 用渐变高亮，次要数据退到浅灰。支持暗色，长时间盯屏不刺眼。',link:'https://example.com/ui/dashboard',cover:'image/cover-ui-5.jpg'},
+  {id:'ui-6',cat:'ui',title:'教育产品首页',year:'2023',role:'视觉 / 落地页',intro:'温暖、清晰、有引导感，让第一次来访的家长愿意留下来。',detail:'首页承担建立信任的第一棒。我用大留白和柔和渐变降低焦虑感，把怎么学、跟谁学、效果如何三段式讲清楚，CTA 用紫粉渐变保证可点击性。',link:'https://example.com/ui/edu',cover:'image/cover-ui-6.jpg'},
   // 平面设计
-  {id:'g-1',cat:'graphic',title:'品牌视觉系统',year:'2025',role:'品牌设计',intro:'为一家科技公司建立一套会发光的识别语言，从 logo 到物料全线统一。',detail:'核心是一枚由紫到粉的渐变星环，象征连接与未来。我定义了色彩、字体、间距与图形语言四套规则，保证在名片、PPT、官网三种载体上观感一致。',link:'https://example.com/graphic/brand'},
-  {id:'g-2',cat:'graphic',title:'音乐节主视觉',year:'2025',role:'海报 / 主视觉',intro:'用一整片炸开的渐变，把夏夜音乐节的躁动提前给到观众。',detail:'主视觉以霓虹粉与青色对撞，配合流动的网格底纹，营造电子音乐的律动感。衍生出海报、票根、社交头像等 12 个物料。',link:'https://example.com/graphic/festival'},
-  {id:'g-3',cat:'graphic',title:'书籍封面系列',year:'2024',role:'装帧设计',intro:'三本关于未来的小书，用同一套玻璃质感讲三种情绪。',detail:'三本书共用圆角、毛玻璃与霓虹描边的语言，但分别用紫、粉、青做主调区分主题。书脊连起来是一条完整的渐变带。',link:'https://example.com/graphic/books'},
-  {id:'g-4',cat:'graphic',title:'城市马拉松海报',year:'2024',role:'活动海报',intro:'把一条跑道，画成穿过整座城市的霓虹光线。',detail:'主图是一条由起点延伸到终点的发光轨迹，沿途标注城市地标。信息层级让赛事名称、时间、报名入口在三秒内被读到。',link:'https://example.com/graphic/marathon'},
-  {id:'g-5',cat:'graphic',title:'咖啡包装设计',year:'2023',role:'包装设计',intro:'给精品咖啡豆，穿上一层透光的玻璃质感外衣。',detail:'包装用半透明材质模拟毛玻璃，豆子的颜色从内部透出来。标签只用极简的字体和一道渐变腰封，货架上一眼可辨。',link:'https://example.com/graphic/coffee'},
-  {id:'g-6',cat:'graphic',title:'玻璃质感字体实验',year:'2023',role:'字体 / 实验',intro:'把玻璃这种材质的感觉，变成可书写的笔画。',detail:'这是一次个人实验：用高光、折射与半透明描边，重绘了一套展示用字体。虽然不适合长文，但在标题与 logo 上很有未来感。',link:'https://example.com/graphic/type'},
+  {id:'g-1',cat:'graphic',title:'品牌视觉系统',year:'2025',role:'品牌设计',intro:'为一家科技公司建立一套会发光的识别语言，从 logo 到物料全线统一。',detail:'核心是一枚由紫到粉的渐变星环，象征连接与未来。我定义了色彩、字体、间距与图形语言四套规则，保证在名片、PPT、官网三种载体上观感一致。',link:'https://example.com/graphic/brand',cover:'image/cover-g-1.jpg'},
+  {id:'g-2',cat:'graphic',title:'音乐节主视觉',year:'2025',role:'海报 / 主视觉',intro:'用一整片炸开的渐变，把夏夜音乐节的躁动提前给到观众。',detail:'主视觉以霓虹粉与青色对撞，配合流动的网格底纹，营造电子音乐的律动感。衍生出海报、票根、社交头像等 12 个物料。',link:'https://example.com/graphic/festival',cover:'image/cover-g-2.jpg'},
+  {id:'g-3',cat:'graphic',title:'书籍封面系列',year:'2024',role:'装帧设计',intro:'三本关于未来的小书，用同一套玻璃质感讲三种情绪。',detail:'三本书共用圆角、毛玻璃与霓虹描边的语言，但分别用紫、粉、青做主调区分主题。书脊连起来是一条完整的渐变带。',link:'https://example.com/graphic/books',cover:'image/cover-g-3.jpg'},
+  {id:'g-4',cat:'graphic',title:'城市马拉松海报',year:'2024',role:'活动海报',intro:'把一条跑道，画成穿过整座城市的霓虹光线。',detail:'主图是一条由起点延伸到终点的发光轨迹，沿途标注城市地标。信息层级让赛事名称、时间、报名入口在三秒内被读到。',link:'https://example.com/graphic/marathon',cover:'image/cover-g-4.jpg'},
+  {id:'g-5',cat:'graphic',title:'咖啡包装设计',year:'2023',role:'包装设计',intro:'给精品咖啡豆，穿上一层透光的玻璃质感外衣。',detail:'包装用半透明材质模拟毛玻璃，豆子的颜色从内部透出来。标签只用极简的字体和一道渐变腰封，货架上一眼可辨。',link:'https://example.com/graphic/coffee',cover:'image/cover-g-5.jpg'},
+  {id:'g-6',cat:'graphic',title:'玻璃质感字体实验',year:'2023',role:'字体 / 实验',intro:'把玻璃这种材质的感觉，变成可书写的笔画。',detail:'这是一次个人实验：用高光、折射与半透明描边，重绘了一套展示用字体。虽然不适合长文，但在标题与 logo 上很有未来感。',link:'https://example.com/graphic/type',cover:'image/cover-g-6.jpg'},
   // 前端页面
-  {id:'fe-1',cat:'fe',title:'组件库官网',year:'2025',role:'前端 / 站点',intro:'一个文档即演示的玻璃风格组件库站点，看文档的同时就能试组件。',detail:'站点把每个组件的 API 与实时预览并排呈现，主题色用 CSS 变量统一，支持一键切换明暗。整站零框架，构建产物极小。',link:'https://example.com/fe/component'},
-  {id:'fe-2',cat:'fe',title:'数据可视化大屏',year:'2025',role:'前端 / 可视化',intro:'一块会实时流动的城市脉搏大屏，数据进来就在屏幕上呼吸。',detail:'用 Canvas 绘制动态折线、热力与粒子，配色沿用紫粉青体系。GPU 合成保证 60fps，大屏可跑一整晚不卡。',link:'https://example.com/fe/dataviz'},
-  {id:'fe-3',cat:'fe',title:'个人作品集模板',year:'2024',role:'前端 / 模板',intro:'也就是你正在浏览的这类单文件作品集，开箱即用、随手可改。',detail:'纯原生 HTML、CSS、JS，一个文件带走全部。内置路由、明暗切换、动效与无障碍处理，非开发者也能改成自己的站。',link:'https://example.com/fe/portfolio'},
-  {id:'fe-4',cat:'fe',title:'落地页生成器',year:'2024',role:'前端 / 工具',intro:'五分钟，拖出一个能转化的产品落地页。',detail:'提供区块级组件与实时预览，用户拼装后即可导出静态文件。重点打磨了首屏、卖点、社会证明与 CTA 四类高转化区块。',link:'https://example.com/fe/landing'},
-  {id:'fe-5',cat:'fe',title:'零依赖博客引擎',year:'2023',role:'前端 / 工具',intro:'一个不引任何库的 Markdown 博客内核，复制即用。',detail:'内置轻量 Markdown 解析、标签筛选与文章导航，全部写在几百行 JS 里。安全转义，避免 XSS。',link:'https://example.com/fe/blog'},
-  {id:'fe-6',cat:'fe',title:'交互式在线简历',year:'2023',role:'前端 / 创意',intro:'让简历滚动起来，变成一段关于我的叙事。',detail:'用滚动进度驱动章节切换，关键经历以卡片浮现。支持打印样式，一键导出 PDF 也不丢版式。',link:'https://example.com/fe/resume'}
+  {id:'fe-1',cat:'fe',title:'组件库官网',year:'2025',role:'前端 / 站点',intro:'一个文档即演示的玻璃风格组件库站点，看文档的同时就能试组件。',detail:'站点把每个组件的 API 与实时预览并排呈现，主题色用 CSS 变量统一，支持一键切换明暗。整站零框架，构建产物极小。',link:'https://example.com/fe/component',cover:'image/cover-fe-1.jpg'},
+  {id:'fe-2',cat:'fe',title:'数据可视化大屏',year:'2025',role:'前端 / 可视化',intro:'一块会实时流动的城市脉搏大屏，数据进来就在屏幕上呼吸。',detail:'用 Canvas 绘制动态折线、热力与粒子，配色沿用紫粉青体系。GPU 合成保证 60fps，大屏可跑一整晚不卡。',link:'https://example.com/fe/dataviz',cover:'image/cover-fe-2.jpg'},
+  {id:'fe-3',cat:'fe',title:'个人作品集模板',year:'2024',role:'前端 / 模板',intro:'也就是你正在浏览的这类单文件作品集，开箱即用、随手可改。',detail:'纯原生 HTML、CSS、JS，一个文件带走全部。内置路由、明暗切换、动效与无障碍处理，非开发者也能改成自己的站。',link:'https://example.com/fe/portfolio',cover:'image/cover-fe-3.jpg'},
+  {id:'fe-4',cat:'fe',title:'落地页生成器',year:'2024',role:'前端 / 工具',intro:'五分钟，拖出一个能转化的产品落地页。',detail:'提供区块级组件与实时预览，用户拼装后即可导出静态文件。重点打磨了首屏、卖点、社会证明与 CTA 四类高转化区块。',link:'https://example.com/fe/landing',cover:'image/cover-fe-4.jpg'},
+  {id:'fe-5',cat:'fe',title:'零依赖博客引擎',year:'2023',role:'前端 / 工具',intro:'一个不引任何库的 Markdown 博客内核，复制即用。',detail:'内置轻量 Markdown 解析、标签筛选与文章导航，全部写在几百行 JS 里。安全转义，避免 XSS。',link:'https://example.com/fe/blog',cover:'image/cover-fe-5.jpg'},
+  {id:'fe-6',cat:'fe',title:'交互式在线简历',year:'2023',role:'前端 / 创意',intro:'让简历滚动起来，变成一段关于我的叙事。',detail:'用滚动进度驱动章节切换，关键经历以卡片浮现。支持打印样式，一键导出 PDF 也不丢版式。',link:'https://example.com/fe/resume',cover:'image/cover-fe-6.jpg'}
 ];
 
 function catName(id){ const c = WORK_CATS.find(function(x){return x.id===id;}); return c?c.name:id; }
