@@ -260,6 +260,14 @@ const PROJECTS = [
   {id:'fe-6',cat:'fe',title:'交互式在线简历',year:'2023',role:'前端 / 创意',intro:'让简历滚动起来，变成一段关于我的叙事。',detail:'用滚动进度驱动章节切换，关键经历以卡片浮现。支持打印样式，一键导出 PDF 也不丢版式。',link:'https://example.com/fe/resume',cover:'image/cover-fe-6.jpg'}
 ];
 
+/* 小程序：先放 3 个占位项目，folder 指向各自的文件目录（后续放页面和图片）。
+   把该小程序的入口页命名为 folder/index.html，卡片即可跳转到对应页面。 */
+const MINIAPPS = [
+  {id:'p1',folder:'miniapp/p1',title:'股票行情',cat:'小程序',year:'2026',intro:'在线查看 A 股行情，支持日 K / 周 K / 月 K 蜡烛图，含开盘、收盘、最高、最低与成交量等详情。',detail:'一个零依赖的在线股票行情查看器：输入股票代码或选择预设，实时拉取东方财富行情，绘制红涨绿跌蜡烛图与 MA 均线、成交量副图，并展示今开、昨收、最高、最低、成交额、振幅、换手率、市盈率与总市值。接口受限或离线时自动降级为示例数据。'},
+  {id:'p2',folder:'miniapp/p2',title:'项目2',cat:'小程序',year:'2026',intro:'小程序项目二，把相关页面与图片放进 miniapp/p2 文件夹即可。',detail:'这是小程序栏目下的示例项目 2。把该小程序的首页、截图、说明文档等放到 miniapp/p2 目录，并把入口命名为 index.html，卡片就会直接跳转到对应页面。'},
+  {id:'p3',folder:'miniapp/p3',title:'项目3',cat:'小程序',year:'2026',intro:'小程序项目三，把相关页面与图片放进 miniapp/p3 文件夹即可。',detail:'这是小程序栏目下的示例项目 3。把该小程序的首页、截图、说明文档等放到 miniapp/p3 目录，并把入口命名为 index.html，卡片就会直接跳转到对应页面。'}
+];
+
 function catName(id){ const c = WORK_CATS.find(function(x){return x.id===id;}); return c?c.name:id; }
 function catIcon(id){ const c = WORK_CATS.find(function(x){return x.id===id;}); return c?c.icon:'layout'; }
 
@@ -286,7 +294,8 @@ const ICONS = {
   monitor:'<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
   grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
   external:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
-  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  phone:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>'
 };
 function svg(name,cls){
   const inner = ICONS[name]||'';
@@ -493,6 +502,52 @@ function cardHTML(p){
       + '<span class="read">查看 '+svg('arrow')+'</span></div>'
     + '</div></div>';
 }
+
+/* ============================================================
+   渲染：小程序
+   ============================================================ */
+function renderMiniApps(){
+  const grid = document.getElementById('miniGrid');
+  if(!grid) return;
+  grid.innerHTML = MINIAPPS.map(function(p,idx){
+    const g = COVER_GRADS[idx % COVER_GRADS.length];
+    return '<div class="work-card reveal" data-mid="'+p.id+'" tabindex="0" role="button" aria-label="'+p.title+'">'
+      + '<div class="w-cover" style="background:'+g+'">'
+        + '<div class="w-cover-deco">'+svg('grid')+'</div>'
+        + '<div class="w-cover-ic">'+svg('phone')+'</div>'
+        + '<span class="w-cover-cat">小程序</span>'
+      + '</div>'
+      + '<div class="work-body">'
+        + '<h3>'+p.title+'</h3>'
+        + '<p>'+p.intro+'</p>'
+        + '<div class="work-foot"><span class="pc-tag">'+p.cat+'</span>'
+        + '<span class="read">进入 '+svg('arrow')+'</span></div>'
+      + '</div></div>';
+  }).join('');
+  grid.querySelectorAll('.work-card').forEach(function(c){
+    c.addEventListener('click',function(){ openMini(c.dataset.mid); });
+    c.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openMini(c.dataset.mid); } });
+  });
+  observeReveals();
+}
+function openMini(id){
+  const p = MINIAPPS.find(function(x){return x.id===id;});
+  if(!p) return;
+  const idx = MINIAPPS.indexOf(p);
+  const cover = document.getElementById('modalCover');
+  cover.style.background = COVER_GRADS[idx % COVER_GRADS.length];
+  cover.innerHTML = '<div class="w-cover-ic">'+svg('phone')+'</div>';
+  document.getElementById('modalMeta').innerHTML = '<span class="a-tag">小程序</span><span>'+p.year+'</span>';
+  document.getElementById('modalTitle').textContent = p.title;
+  document.getElementById('modalIntro').textContent = p.intro;
+  document.getElementById('modalDetail').textContent = p.detail;
+  const link = document.getElementById('modalLink');
+  link.href = p.folder + '/index.html';
+  link.innerHTML = '进入小程序 '+svg('external');
+  document.getElementById('modal').classList.add('show');
+  document.body.classList.add('modal-open');
+  document.getElementById('modalClose').focus();
+}
 function renderWork(filter){
   const tabsEl = document.getElementById('workTabs');
   const grid = document.getElementById('workGrid');
@@ -531,7 +586,9 @@ function openModal(id){
   document.getElementById('modalTitle').textContent = p.title;
   document.getElementById('modalIntro').textContent = p.intro;
   document.getElementById('modalDetail').textContent = p.detail;
-  document.getElementById('modalLink').href = p.link;
+  const wl = document.getElementById('modalLink');
+  wl.href = p.link;
+  wl.innerHTML = '访问项目 '+svg('external');
   document.getElementById('modal').classList.add('show');
   document.body.classList.add('modal-open');
   document.getElementById('modalClose').focus();
@@ -544,7 +601,7 @@ function closeModal(){
 /* ============================================================
    路由
    ============================================================ */
-const VIEWS = ['home','articles','article','tags','work','about'];
+const VIEWS = ['home','articles','article','tags','work','about','miniapps'];
 function setActiveNav(view){
   document.querySelectorAll('#navLinks a').forEach(function(a){
     a.classList.toggle('active', a.dataset.view===view || (view==='article' && a.dataset.view==='articles'));
@@ -561,6 +618,7 @@ function router(){
   if(view==='tags'){ renderTagsCloud(); }
   if(view==='article'){ renderArticle(parts[1]); }
   if(view==='work'){ renderWork('all'); }
+  if(view==='miniapps'){ renderMiniApps(); }
   setActiveNav(view);
   window.scrollTo({top:0,behavior:'auto'});
   observeReveals();
