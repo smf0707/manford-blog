@@ -285,7 +285,7 @@
         <button class="ct-btn" id="zoomOut" title="缩小">-</button>
         <button class="ct-btn" id="zoomReset" title="重置视图">&#10227;</button>
       </div>
-      <div class="chart-hint">滚轮缩放 · 拖动平移 · 点击锁定光标</div>
+      <div class="chart-hint">滚轮缩放 · 拖动平移 · 点击锁定光标 · ← → 移动选中</div>
       <div class="overlay" id="overlay"><span class="spinner"></span><span>正在获取行情数据…</span></div>
     </div>
 
@@ -478,6 +478,7 @@
       window.addEventListener('mouseup', function(){ self.dragging=false; self.wrap.classList.remove('dragging'); });
       this.canvas.addEventListener('click', function(e){ self.onClick(e); });
       this.canvas.addEventListener('wheel', function(e){ self.onWheel(e); }, {passive:false});
+      window.addEventListener('keydown', function(e){ self.onKey(e); });
       var zi=$('zoomIn'), zo=$('zoomOut'), zr=$('zoomReset');
       if(zi) zi.addEventListener('click', function(){ self.zoomAt(Math.floor(self.viewCount()/2), 0.82); });
       if(zo) zo.addEventListener('click', function(){ self.zoomAt(Math.floor(self.viewCount()/2), 1/0.82); });
@@ -687,6 +688,27 @@
       var mx=e.clientX-rect.left;
       var i=this.indexAtX(mx);
       this.zoomAt(i, e.deltaY<0 ? 0.82 : 1/0.82);
+    },
+    // 键盘左右键：移动选中的 K 线（lockedFull），移出视图时自动平移跟随
+    onKey:function(e){
+      if(this.lockedFull<0) return;
+      if(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+      if(this.canvas.offsetParent===null) return; // 行情视图被隐藏时不响应
+      var d=0;
+      if(e.key==='ArrowLeft') d=-1;
+      else if(e.key==='ArrowRight') d=1;
+      else return;
+      e.preventDefault();
+      var len=this.full.length, vc=this.viewCount();
+      var ni=this.lockedFull+d;
+      if(ni<0 || ni>=len) return;
+      this.lockedFull=ni;
+      if(ni<this.viewStart){ this.viewStart=ni; this.viewEnd=ni+vc; }
+      else if(ni>=this.viewEnd){ this.viewEnd=ni+1; this.viewStart=this.viewEnd-vc; }
+      if(this.viewStart<0){ this.viewStart=0; this.viewEnd=vc; }
+      if(this.viewEnd>len){ this.viewEnd=len; this.viewStart=Math.max(0, len-vc); }
+      this.updateTip(ni-this.viewStart, null);
+      this.schedule();
     },
     zoomAt:function(anchorVis, factor){
       var len=this.full.length, vc=this.viewCount();
