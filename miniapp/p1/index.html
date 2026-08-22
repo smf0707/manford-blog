@@ -126,9 +126,71 @@
   .tip .t-grid{display:grid;grid-template-columns:auto auto;gap:3px 14px;font-family:var(--mono)}
   .tip .t-grid span{color:var(--muted)}
   .tip .t-grid b{font-weight:700;text-align:right}
+  #chart{cursor:crosshair}
+  .chart-wrap.dragging #chart{cursor:grabbing}
+  .chart-toolbar{position:absolute;top:12px;right:14px;display:flex;gap:6px;z-index:7}
+  .ct-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;
+    background:rgba(20,26,36,.82);border:1px solid var(--line);color:var(--text);cursor:pointer;
+    font-size:17px;line-height:1;font-family:var(--mono);transition:.15s;user-select:none}
+  .ct-btn:hover{border-color:var(--accent);background:rgba(32,40,54,.94)}
+  .ct-btn:active{transform:scale(.9)}
+  .chart-hint{position:absolute;left:14px;bottom:10px;z-index:6;font-size:11px;color:var(--muted2);
+    background:rgba(10,13,20,.45);padding:3px 8px;border-radius:6px;pointer-events:none}
 
   .foot{margin-top:18px;font-size:12px;color:var(--muted2);line-height:1.7;text-align:center}
   .foot a{color:var(--muted)}
+
+  /* 主导航 */
+  .mainnav{display:flex;gap:6px;margin-bottom:18px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:5px;width:fit-content}
+  .mnav-btn{border:0;background:transparent;color:var(--muted);font-size:14px;font-weight:600;
+    padding:9px 22px;border-radius:9px;cursor:pointer;transition:.18s}
+  .mnav-btn:hover{color:var(--text)}
+  .mnav-btn.active{color:#fff;background:linear-gradient(135deg,var(--accent),#ec4899)}
+  .view.hidden{display:none}
+
+  /* 行情标题行（名称 + 加自选） */
+  .q-title-row{display:flex;align-items:center;gap:14px}
+  .watch-btn{font-size:13px;font-weight:600;padding:7px 15px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--accent);color:var(--accent);background:transparent;transition:.18s;white-space:nowrap}
+  .watch-btn:hover{background:rgba(124,92,255,.12)}
+  .watch-btn.in{background:linear-gradient(135deg,var(--accent),#ec4899);color:#fff;border-color:transparent}
+
+  /* chip 删除角标 */
+  .chip{position:relative}
+  .chip .del{position:absolute;top:-7px;right:-7px;width:16px;height:16px;border-radius:50%;
+    background:var(--up);color:#fff;font-size:12px;line-height:15px;text-align:center;cursor:pointer;
+    display:none;border:2px solid var(--bg);font-weight:700}
+  .chip:hover .del{display:block}
+  .chip .del:hover{transform:scale(1.18)}
+
+  /* 市场 / 自选 卡片与表格 */
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px 18px;margin-bottom:16px}
+  .card h3{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:baseline;gap:10px}
+  .card h3 .sub{font-size:12px;color:var(--muted);font-weight:500}
+  .mkt-table{width:100%;border-collapse:collapse;font-size:13px}
+  .mkt-table th,.mkt-table td{padding:10px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05)}
+  .mkt-table thead th{color:var(--muted);font-weight:600;user-select:none;white-space:nowrap;position:relative}
+  .mkt-table th.sortable{cursor:pointer}
+  .mkt-table th.sortable:hover{color:var(--text)}
+  .mkt-table th.active{color:var(--text)}
+  .mkt-table th .arrow{font-size:10px;margin-left:3px;color:var(--accent)}
+  .mkt-table td.num{text-align:right;font-family:var(--mono)}
+  .mkt-table .rank{color:var(--muted2);font-family:var(--mono);width:36px;text-align:center}
+  .mkt-table .t-name{font-weight:600}
+  .mkt-table tbody tr.nav{cursor:pointer;transition:background .15s}
+  .mkt-table tbody tr.nav:hover{background:rgba(124,92,255,.09)}
+  .mkt-table tbody tr.tbl-empty:hover{background:transparent}
+  .cancel-sort{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+    padding:3px 8px;cursor:pointer;background:var(--panel2);transition:.15s}
+  .cancel-sort:hover{color:var(--text);border-color:var(--accent)}
+  .expand-row td{text-align:center;color:var(--muted);cursor:pointer;font-size:12px}
+  .expand-row:hover td{color:var(--text)}
+  .tbl-empty td{text-align:center;color:var(--muted);padding:26px}
+  .row-del{display:inline-block;width:20px;height:20px;line-height:18px;text-align:center;border-radius:6px;
+    color:var(--muted);border:1px solid var(--line);cursor:pointer;font-size:14px;transition:.15s}
+  .row-del:hover{color:#fff;background:var(--up);border-color:var(--up)}
 
   @media(max-width:760px){
     .q-main{margin-left:0;width:100%;justify-content:space-between}
@@ -142,19 +204,28 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="../../index.html">
+    <a class="brand" href="https://smf0707.github.io/manford-blog/">
       <span class="logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 7-8"/><path d="M14 8h5v5"/></svg>
       </span>
       <span>股票行情<small>MANFORD · 小程序</small></span>
     </a>
     <div class="links">
-      <a href="../../index.html">&larr; 返回博客</a>
+      <a href="https://smf0707.github.io/manford-blog/">&larr; 返回博客</a>
       <span class="status" id="status"><span class="dot"></span><span id="statusText">加载中</span></span>
     </div>
   </header>
 
   <div class="wrap">
+    <!-- 主导航 -->
+    <nav class="mainnav" id="mainnav">
+      <button class="mnav-btn active" data-view="quote">行情</button>
+      <button class="mnav-btn" data-view="market">市场</button>
+      <button class="mnav-btn" data-view="watch">自选股</button>
+    </nav>
+
+    <!-- 行情视图（K线 + 搜索） -->
+    <section id="view-quote" class="view">
     <!-- 选择器 -->
     <div class="selector">
       <div class="search">
@@ -168,7 +239,10 @@
     <!-- 报价头 -->
     <div class="quote">
       <div class="q-id">
-        <div class="q-name" id="qName">--</div>
+        <div class="q-title-row">
+          <div class="q-name" id="qName">--</div>
+          <button class="watch-btn" id="watchBtn">加自选</button>
+        </div>
         <div class="q-code" id="qCode">-- <span class="mkt" id="qMkt"></span></div>
       </div>
       <div class="q-main">
@@ -206,6 +280,12 @@
     <div class="chart-wrap" id="chartWrap">
       <canvas id="chart"></canvas>
       <div class="tip" id="tip"></div>
+      <div class="chart-toolbar">
+        <button class="ct-btn" id="zoomIn" title="放大">+</button>
+        <button class="ct-btn" id="zoomOut" title="缩小">-</button>
+        <button class="ct-btn" id="zoomReset" title="重置视图">&#10227;</button>
+      </div>
+      <div class="chart-hint">滚轮缩放 · 拖动平移 · 点击锁定光标</div>
       <div class="overlay" id="overlay"><span class="spinner"></span><span>正在获取行情数据…</span></div>
     </div>
 
@@ -213,6 +293,31 @@
       本页为纯静态演示，行情数据在浏览器端实时向东方财富接口请求；若接口受限或离线，会自动降级为示例数据。<br/>
       仅供学习与研究使用，不构成任何投资建议。
     </div>
+    </section>
+
+    <!-- 市场视图 -->
+    <section id="view-market" class="view hidden">
+      <div class="card">
+        <h3>当日板块涨幅榜 <span class="sub">点击表头可排序 · 展开看更多</span></h3>
+        <div id="tbl-sector"></div>
+      </div>
+      <div class="card">
+        <h3>当日个股涨幅榜</h3>
+        <div id="tbl-gainers"></div>
+      </div>
+      <div class="card">
+        <h3>当日主力资金流入榜</h3>
+        <div id="tbl-inflow"></div>
+      </div>
+    </section>
+
+    <!-- 自选股视图 -->
+    <section id="view-watch" class="view hidden">
+      <div class="card">
+        <h3>我的自选股 <span class="sub">最后添加排在最前</span></h3>
+        <div id="tbl-watch"></div>
+      </div>
+    </section>
   </div>
 
 <script>
@@ -264,6 +369,10 @@
     if(v>=1e4) return (v/1e4).toFixed(2)+'万';
     return Math.round(v)+'元';
   }
+  function realName(code){
+    for(var i=0;i<PRESETS.length;i++){ if(PRESETS[i].code===code) return PRESETS[i].name; }
+    return code;
+  }
 
   /* ============ 数据层 ============ */
   function parseKline(arr){
@@ -276,6 +385,16 @@
       };
     });
   }
+  function fetchJSON(url, tries){
+    tries = tries || 1;
+    return fetch(url, {headers:{'Accept':'application/json'}}).then(function(r){ return r.json(); }).then(function(j){
+      if(!j || j.data==null) throw new Error('empty');
+      return j;
+    }).catch(function(err){
+      if(tries>1) return new Promise(function(res){ setTimeout(function(){ res(fetchJSON(url, tries-1)); }, 350); });
+      throw err;
+    });
+  }
   function fetchKline(code, range, fqt){
     var secid = secidOf(code);
     var url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get'
@@ -283,8 +402,7 @@
       + '&fields1=f1,f2,f3,f4,f5,f6'
       + '&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61'
       + '&klt=' + KLT[range] + '&fqt=' + (fqt==null?0:fqt) + '&beg=0&end=20500101&lmt=' + LMT[range];
-    return fetch(url, {headers:{'Accept':'application/json'}}).then(function(r){ return r.json(); }).then(function(j){
-      if(!j || !j.data || !j.data.klines || !j.data.klines.length) throw new Error('no data');
+    return fetchJSON(url, 2).then(function(j){
       return { name:j.data.name, code:j.data.code, decimal:j.data.decimal||2, klines:parseKline(j.data.klines) };
     });
   }
@@ -323,7 +441,7 @@
       price = close;
       d = new Date(d.getTime()+step*86400000);
     }
-    return { name:'示例·'+code, code:code, decimal:2, klines:bars, demo:true };
+    return { name:realName(code), code:code, decimal:2, klines:bars, demo:true };
   }
 
   /* ============ 均线 ============ */
@@ -341,11 +459,13 @@
   var Chart = {
     canvas:null, ctx:null, wrap:null, tip:null,
     dpr:1, cssW:0, cssH:0,
-    data:[], range:'day', decimal:2,
+    full:[], range:'day', decimal:2,
     showMA:{5:true,10:true,20:true},
-    hoverIndex:-1, hoverY:0,
+    viewStart:0, viewEnd:0,
+    hoverIndex:-1, lockedFull:-1, hoverY:0,
+    dragging:false, dragStartX:0, dragStartVS:0,
     padL:10, padR:66, padT:16, padB:26, gap:10,
-    raf:0,
+    raf:0, DEF_VIEW:120, MIN_VIEW:20,
     init:function(){
       this.canvas = $('chart'); this.ctx = this.canvas.getContext('2d');
       this.wrap = $('chartWrap'); this.tip = $('tip');
@@ -353,7 +473,15 @@
       var ro = new ResizeObserver(function(){ self.resize(); });
       ro.observe(this.wrap);
       this.canvas.addEventListener('mousemove', function(e){ self.onMove(e); });
-      this.canvas.addEventListener('mouseleave', function(){ self.hoverIndex=-1; self.tip.classList.remove('show'); self.schedule(); });
+      this.canvas.addEventListener('mouseleave', function(){ self.onLeave(); });
+      this.canvas.addEventListener('mousedown', function(e){ self.onDown(e); });
+      window.addEventListener('mouseup', function(){ self.dragging=false; self.wrap.classList.remove('dragging'); });
+      this.canvas.addEventListener('click', function(e){ self.onClick(e); });
+      this.canvas.addEventListener('wheel', function(e){ self.onWheel(e); }, {passive:false});
+      var zi=$('zoomIn'), zo=$('zoomOut'), zr=$('zoomReset');
+      if(zi) zi.addEventListener('click', function(){ self.zoomAt(Math.floor(self.viewCount()/2), 0.82); });
+      if(zo) zo.addEventListener('click', function(){ self.zoomAt(Math.floor(self.viewCount()/2), 1/0.82); });
+      if(zr) zr.addEventListener('click', function(){ self.resetView(); });
       this.resize();
     },
     resize:function(){
@@ -366,8 +494,13 @@
       this.draw();
     },
     setData:function(data, decimal){
-      this.data = data; this.decimal = decimal||2; this.hoverIndex=-1;
-      this.tip.classList.remove('show'); this.draw();
+      this.full=data; this.decimal=decimal||2;
+      var len=data.length;
+      this.viewEnd=len;
+      this.viewStart=Math.max(0, len - this.DEF_VIEW);
+      this.lockedFull=-1; this.hoverIndex=-1;
+      this.tip.classList.remove('show');
+      this.draw();
     },
     schedule:function(){
       var self=this;
@@ -389,54 +522,55 @@
         volTop:this.padT+priceH+this.gap, volBot:this.padT+priceH+this.gap+volH
       };
     },
+    viewCount:function(){ return this.viewEnd - this.viewStart; },
+    vis:function(){ return (this.viewEnd>this.viewStart) ? this.full.slice(this.viewStart, this.viewEnd) : []; },
+    indexAtX:function(mx){
+      var L=this.layout(), n=this.viewCount();
+      if(n<=0) return -1;
+      var i=Math.floor((mx-this.padL)/(L.innerW/n));
+      return Math.max(0, Math.min(n-1, i));
+    },
     draw:function(){
-      var ctx=this.ctx, L=this.layout(), data=this.data, n=data.length;
+      var ctx=this.ctx, L=this.layout(), vis=this.vis(), n=vis.length;
       ctx.clearRect(0,0,L.W,L.H);
       if(!n) return;
       var min=Infinity,max=-Infinity,vmax=0;
       for(var i=0;i<n;i++){
-        if(data[i].low<min) min=data[i].low;
-        if(data[i].high>max) max=data[i].high;
-        if(data[i].vol>vmax) vmax=data[i].vol;
+        if(vis[i].low<min) min=vis[i].low;
+        if(vis[i].high>max) max=vis[i].high;
+        if(vis[i].vol>vmax) vmax=vis[i].vol;
       }
       var pad=(max-min)*0.06; min-=pad; max+=pad;
-      var barW=L.innerW/n;
-      var padL=this.padL;
+      var barW=L.innerW/n, padL=this.padL;
       var X=function(i){ return padL + (i+0.5)*barW; };
       var yP=function(p){ return L.priceBot - (p-min)/(max-min)*(L.priceBot-L.priceTop); };
       var yV=function(v){ return L.volBot - v/vmax*(L.volBot-L.volTop); };
 
-      // 网格 + 价格轴
       ctx.font='11px '+getMono();
       ctx.textBaseline='middle'; ctx.textAlign='left';
-      var rows=5;
-      for(var g=0; g<=rows; g++){
-        var p=min+(max-min)*g/rows, y=yP(p);
+      for(var g=0; g<=5; g++){
+        var p=min+(max-min)*g/5, y=yP(p);
         ctx.strokeStyle='rgba(255,255,255,0.05)';
         ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+L.innerW,y); ctx.stroke();
         ctx.fillStyle='#7a8295';
         ctx.fillText(p.toFixed(this.decimal), padL+L.innerW+6, y);
       }
-
-      // 成交量轴标签
       ctx.fillStyle='#7a8295';
       ctx.fillText(fmtVol(vmax), padL+L.innerW+6, L.volTop+8);
 
-      // 蜡烛
       var cw=Math.max(1, barW*0.66);
       for(var i2=0;i2<n;i2++){
-        var d=data[i2], x=X(i2), up=d.close>=d.open, col=up?C.up:C.down;
+        var d=vis[i2], x=X(i2), up=d.close>=d.open, col=up?C.up:C.down;
         ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(x, yP(d.high)); ctx.lineTo(x, yP(d.low)); ctx.stroke();
         var y1=yP(d.open), y2=yP(d.close), top=Math.min(y1,y2), h=Math.max(1,Math.abs(y2-y1));
         ctx.fillRect(x-cw/2, top, cw, h);
       }
 
-      // 均线
       var maColors={5:C.ma5,10:C.ma10,20:C.ma20};
       for(var k in this.showMA){
         if(!this.showMA[k]) continue;
-        var arr=ma(data, +k), mk=maColors[k];
+        var arr=ma(vis, +k), mk=maColors[k];
         ctx.strokeStyle=mk; ctx.lineWidth=1.4; ctx.beginPath();
         var started=false;
         for(var i3=0;i3<n;i3++){
@@ -447,26 +581,23 @@
         ctx.stroke(); ctx.lineWidth=1;
       }
 
-      // 成交量
       for(var i4=0;i4<n;i4++){
-        var d4=data[i4], x4=X(i4), up4=d4.close>=d4.open, col4=up4?C.up:C.down;
+        var d4=vis[i4], x4=X(i4), up4=d4.close>=d4.open, col4=up4?C.up:C.down;
         ctx.fillStyle=col4; ctx.globalAlpha=0.82;
         var y4=yV(d4.vol);
         ctx.fillRect(x4-cw/2, y4, cw, L.volBot-y4);
         ctx.globalAlpha=1;
       }
 
-      // 日期轴
       ctx.fillStyle='#7a8295'; ctx.textAlign='center'; ctx.textBaseline='top';
-      var step=Math.ceil(n/6);
+      var step=Math.max(1, Math.ceil(n/6));
       for(var i5=0;i5<n;i5+=step){
-        ctx.fillText(this.labelFor(data[i5].date), X(i5), L.volBot+6);
+        ctx.fillText(this.labelFor(vis[i5].date), X(i5), L.volBot+6);
       }
 
-      // 图例（最新 MA 值）
       ctx.textAlign='left'; ctx.textBaseline='top';
       var lx=padL+6;
-      var labels=[['MA5',ma(data,5)[n-1],C.ma5],['MA10',ma(data,10)[n-1],C.ma10],['MA20',ma(data,20)[n-1],C.ma20]];
+      var labels=[['MA5',ma(vis,5)[n-1],C.ma5],['MA10',ma(vis,10)[n-1],C.ma10],['MA20',ma(vis,20)[n-1],C.ma20]];
       for(var li=0; li<labels.length; li++){
         var lab=labels[li]; if(lab[1]==null) continue;
         var txt=lab[0]+' '+lab[1].toFixed(this.decimal);
@@ -474,36 +605,116 @@
         lx += ctx.measureText(txt).width + 14;
       }
 
-      // 十字光标
-      if(this.hoverIndex>=0){
-        var hi=this.hoverIndex, hx=X(hi);
+      var lockedVis = (this.lockedFull>=0) ? this.lockedFull-this.viewStart : -1;
+      var act = this.hoverIndex>=0 ? this.hoverIndex : lockedVis;
+      if(act>=0 && act<n && !this.dragging){
+        var hi=act, hx=X(hi);
+        var lockedMode = (this.hoverIndex<0 && lockedVis===hi);
         ctx.save();
-        ctx.strokeStyle='rgba(255,255,255,0.38)'; ctx.setLineDash([4,4]);
+        ctx.strokeStyle = lockedMode ? 'rgba(120,180,255,0.95)' : 'rgba(255,255,255,0.38)';
+        ctx.setLineDash([4,4]);
         ctx.beginPath(); ctx.moveTo(hx, L.priceTop); ctx.lineTo(hx, L.volBot); ctx.stroke();
-        if(this.hoverY>=L.priceTop && this.hoverY<=L.priceBot){
-          ctx.beginPath(); ctx.moveTo(padL, this.hoverY); ctx.lineTo(padL+L.innerW, this.hoverY); ctx.stroke();
-          var pv = max - (this.hoverY-L.priceTop)/(L.priceBot-L.priceTop)*(max-min);
-          ctx.fillStyle='#1b2230'; ctx.fillRect(padL+L.innerW, this.hoverY-9, this.padR, 18);
+        var hy = lockedMode ? yP(vis[hi].close) : this.hoverY;
+        if(hy>=L.priceTop && hy<=L.priceBot){
+          ctx.beginPath(); ctx.moveTo(padL, hy); ctx.lineTo(padL+L.innerW, hy); ctx.stroke();
+          var pv = max - (hy-L.priceTop)/(L.priceBot-L.priceTop)*(max-min);
+          ctx.fillStyle='#1b2230'; ctx.fillRect(padL+L.innerW, hy-9, this.padR, 18);
           ctx.fillStyle='#e6ebf2'; ctx.textAlign='left'; ctx.textBaseline='middle';
-          ctx.fillText(pv.toFixed(this.decimal), padL+L.innerW+6, this.hoverY);
+          ctx.fillText(pv.toFixed(this.decimal), padL+L.innerW+6, hy);
+        }
+        if(lockedMode){
+          ctx.setLineDash([]); ctx.strokeStyle='rgba(120,180,255,0.95)'; ctx.lineWidth=1.5;
+          ctx.beginPath(); ctx.arc(hx, yP(vis[hi].close), Math.max(4,cw), 0, Math.PI*2); ctx.stroke();
+          ctx.lineWidth=1;
         }
         ctx.setLineDash([]); ctx.restore();
       }
     },
     onMove:function(e){
-      if(!this.data.length) return;
+      if(!this.full.length) return;
       var rect=this.canvas.getBoundingClientRect();
       var mx=e.clientX-rect.left, my=e.clientY-rect.top;
       var L=this.layout();
-      var barW=L.innerW/this.data.length;
-      var i=Math.floor((mx-this.padL)/barW);
-      i=Math.max(0, Math.min(this.data.length-1, i));
-      this.hoverIndex=i; this.hoverY=my;
-      this.updateTip(i, e, rect);
+      if(this.dragging){
+        var barW=L.innerW/this.viewCount();
+        var moved=Math.round((mx-this.dragStartX)/barW);
+        var len=this.full.length, vc=this.viewCount();
+        var nvs=Math.max(0, Math.min(len-vc, this.dragStartVS - moved));
+        this.viewStart=nvs; this.viewEnd=nvs+vc;
+        this.hoverIndex=this.indexAtX(mx);
+        this.updateTip(this.hoverIndex, {x:mx,y:my});
+        this.schedule();
+        return;
+      }
+      this.hoverIndex=this.indexAtX(mx); this.hoverY=my;
+      this.updateTip(this.hoverIndex, {x:mx,y:my});
       this.schedule();
     },
-    updateTip:function(i, e, rect){
-      var d=this.data[i], prev=this.data[i-1]||d;
+    onLeave:function(){
+      this.hoverIndex=-1;
+      if(this.lockedFull>=0){
+        var lv=this.lockedFull-this.viewStart, n=this.viewCount();
+        if(lv>=0 && lv<n){ this.updateTip(lv, null); this.tip.classList.add('show'); }
+        else { this.tip.classList.remove('show'); }
+      } else {
+        this.tip.classList.remove('show');
+      }
+      this.schedule();
+    },
+    onDown:function(e){
+      if(e.button!==0) return;
+      this.dragging=true;
+      var rect=this.canvas.getBoundingClientRect();
+      this.dragStartX=e.clientX-rect.left; this.dragStartVS=this.viewStart;
+      this.wrap.classList.add('dragging');
+    },
+    onClick:function(e){
+      if(!this.full.length) return;
+      var rect=this.canvas.getBoundingClientRect();
+      var mx=e.clientX-rect.left;
+      var i=this.indexAtX(mx);
+      if(i<0) return;
+      var fullIdx=this.viewStart+i;
+      this.lockedFull = (this.lockedFull===fullIdx) ? -1 : fullIdx;
+      this.hoverIndex=i;
+      this.updateTip(i, {x:mx, y:e.clientY-rect.top});
+      this.schedule();
+    },
+    onWheel:function(e){
+      if(!this.full.length) return;
+      e.preventDefault();
+      var rect=this.canvas.getBoundingClientRect();
+      var mx=e.clientX-rect.left;
+      var i=this.indexAtX(mx);
+      this.zoomAt(i, e.deltaY<0 ? 0.82 : 1/0.82);
+    },
+    zoomAt:function(anchorVis, factor){
+      var len=this.full.length, vc=this.viewCount();
+      if(vc<=0) return;
+      var newCount=Math.round(vc*factor);
+      newCount=Math.max(this.MIN_VIEW, Math.min(len, newCount));
+      var anchorFull=this.viewStart+anchorVis;
+      var rel=(anchorVis+0.5)/vc;
+      var ns=anchorFull - Math.round(rel*(newCount-1));
+      var ne=ns+newCount;
+      if(ns<0){ ns=0; }
+      if(ne>len){ ne=len; }
+      ns=Math.max(0, Math.min(ne-newCount, ns));
+      ne=ns+newCount;
+      this.viewStart=ns; this.viewEnd=ne;
+      this.schedule();
+    },
+    resetView:function(){
+      var len=this.full.length;
+      this.viewEnd=len; this.viewStart=Math.max(0, len-this.DEF_VIEW);
+      this.lockedFull=-1; this.hoverIndex=-1; this.tip.classList.remove('show');
+      this.schedule();
+    },
+    updateTip:function(visIndex, pos){
+      var n=this.viewCount();
+      if(visIndex<0 || visIndex>=n){ this.tip.classList.remove('show'); return; }
+      var fi=this.viewStart+visIndex;
+      var d=this.full[fi], prev=this.full[fi-1]||d;
       var preC=prev.close;
       var chg=d.close-preC, pct=preC?chg/preC*100:0;
       var col=chg>=0?'up':'down';
@@ -518,10 +729,25 @@
       this.tip.innerHTML=html;
       this.tip.classList.add('show');
       var tw=this.tip.offsetWidth, th=this.tip.offsetHeight;
-      var left=e.clientX-rect.left+14, top=e.clientY-rect.top+14;
-      if(left+tw>rect.width) left=e.clientX-rect.left-tw-14;
-      if(top+th>rect.height) top=rect.height-th-6;
-      if(top<0) top=6;
+      var left, top;
+      if(pos){
+        left=pos.x+14; top=pos.y+14;
+        if(left+tw>this.cssW) left=pos.x-tw-14;
+        if(top+th>this.cssH) top=this.cssH-th-6;
+        if(top<0) top=6;
+      } else {
+        var L=this.layout(), vv=this.vis(), nn=vv.length;
+        var mn=Infinity,mx2=-Infinity;
+        for(var z=0;z<nn;z++){ if(vv[z].low<mn)mn=vv[z].low; if(vv[z].high>mx2)mx2=vv[z].high; }
+        var pp2=(mx2-mn)*0.06; mn-=pp2; mx2+=pp2;
+        var bw=L.innerW/nn;
+        var hx=this.padL+(visIndex+0.5)*bw;
+        var hy=L.priceBot - (d.close-mn)/(mx2-mn)*(L.priceBot-L.priceTop);
+        left=hx+14; top=hy+14;
+        if(left+tw>this.cssW) left=hx-tw-14;
+        if(top+th>this.cssH) top=this.cssH-th-6;
+        if(top<0) top=6;
+      }
       this.tip.style.left=left+'px';
       this.tip.style.top=top+'px';
     }
@@ -533,22 +759,33 @@
     code:'600519', range:'day', fqt:1, cache:{}, quote:null, info:null,
     init:function(){
       Chart.init();
+      this.initTables();
       this.renderChips();
       this.bind();
       this.load(this.code);
     },
     renderChips:function(){
       var box=$('chips');
-      box.innerHTML = PRESETS.map(function(p){
-        return '<button class="chip" data-code="'+p.code+'">'+p.name+' '+p.code+'</button>';
+      var recents=getRecents();
+      box.innerHTML = recents.map(function(p){
+        var act = (p.code===App.code) ? ' active' : '';
+        return '<button class="chip'+act+'" data-code="'+p.code+'">'+p.name+' '+p.code
+          + '<span class="del" data-del="'+p.code+'" title="删除">&times;</span></button>';
       }).join('');
       var self=this;
       box.querySelectorAll('.chip').forEach(function(c){
-        c.addEventListener('click', function(){ self.load(c.dataset.code); });
+        c.addEventListener('click', function(e){
+          if(e.target.classList.contains('del')){ e.stopPropagation(); removeRecent(c.dataset.code); self.renderChips(); return; }
+          self.load(c.dataset.code);
+        });
       });
     },
     bind:function(){
       var self=this;
+      var nav=$('mainnav');
+      if(nav) nav.querySelectorAll('.mnav-btn').forEach(function(b){
+        b.addEventListener('click', function(){ App.switchView(b.dataset.view); });
+      });
       $('queryBtn').addEventListener('click', function(){ self.onQuery(); });
       $('codeInput').addEventListener('keydown', function(e){ if(e.key==='Enter') self.onQuery(); });
       $('tabs').querySelectorAll('.tab').forEach(function(t){
@@ -619,21 +856,25 @@
         self.cache[code] = self.cache[code]||{};
         self.cache[code][key] = kd;
         self.cache[code].quote = q;
-        self.cache[code].name = kd.name;
+        self.cache[code].name = realName(code);
         // 跨周期共享 quote（仅按 code 存一次）
-        self.info = { name:kd.name, code:kd.code, decimal:kd.decimal, demo:!!kd.demo, quote:q };
+        self.info = { name:realName(code), code:kd.code, decimal:kd.decimal, demo:!!kd.demo, quote:q };
         self.render(kd, self.info);
         self.setStatusLive(!!kd.demo);
+        addRecent(code, self.info.name);
+        self.renderChips();
       }).catch(function(){
         var kd=genDemo(code, range, LMT[range]);
         self.cache[code]=self.cache[code]||{}; self.cache[code][range]=kd;
-        self.info={name:kd.name,code:kd.code,decimal:2,demo:true,quote:null};
+        self.info={name:realName(code),code:kd.code,decimal:2,demo:true,quote:null};
         self.render(kd, self.info);
         self.setStatusLive(true);
+        addRecent(code, self.info.name);
+        self.renderChips();
       }).then(function(){ self.showOverlay(false); });
     },
     render:function(kd, info){
-      var data=kd.klines.slice(-DISPLAY[this.range]);
+      var data=kd.klines;   // 全量交给 Chart 管理缩放窗口
       var last=data[data.length-1], prev=data[data.length-2]||last;
       var preC=prev.close;
       var price=last.close, chg=price-preC, pct=preC?chg/preC*100:0;
@@ -668,7 +909,220 @@
       // 图表
       Chart.range=this.range;
       Chart.setData(data, info.decimal);
+      // 加自选按钮
+      var wb=$('watchBtn');
+      if(wb){
+        wb.onclick=function(){
+          toggleWatch(info.code, info.name);
+          App.refreshWatchBtn(info.code);
+          if($('view-watch') && !$('view-watch').classList.contains('hidden')) App.loadWatch();
+        };
+      }
+      this.refreshWatchBtn(info.code);
     }
+  };
+
+  /* ============ 自选 / 最近搜索 · 本地存储 ============ */
+  function lsGet(k, def){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch(e){ return def; } }
+  function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  var RECENTS_KEY='mf_recents', WATCH_KEY='mf_watch';
+  function getRecents(){
+    var r=lsGet(RECENTS_KEY, null);
+    if(!r || !r.length){ r=PRESETS.map(function(p){ return {code:p.code, name:p.name}; }); lsSet(RECENTS_KEY, r); }
+    return r;
+  }
+  function addRecent(code, name){
+    var r=getRecents().filter(function(x){ return x.code!==code; });
+    r.unshift({code:code, name:name||realName(code)});
+    if(r.length>10) r=r.slice(0,10);
+    lsSet(RECENTS_KEY, r);
+  }
+  function removeRecent(code){ lsSet(RECENTS_KEY, getRecents().filter(function(x){ return x.code!==code; })); }
+  function getWatch(){ return lsGet(WATCH_KEY, []); }
+  function inWatch(code){ return getWatch().some(function(x){ return x.code===code; }); }
+  function addWatch(code, name){
+    var w=getWatch();
+    if(w.some(function(x){ return x.code===code; })) return;
+    w.unshift({code:code, name:name||realName(code), ts:Date.now()});
+    lsSet(WATCH_KEY, w);
+  }
+  function removeWatch(code){ lsSet(WATCH_KEY, getWatch().filter(function(x){ return x.code!==code; })); }
+  function toggleWatch(code, name){ if(inWatch(code)) removeWatch(code); else addWatch(code, name); }
+  function signOf(v){ return v>=0 ? 'up' : 'down'; }
+  function fmtCapFlow(v){
+    if(v==null || isNaN(v)) return '--';
+    var neg=v<0; v=Math.abs(v);
+    var s = v>=1e8 ? (v/1e8).toFixed(2)+'亿' : (v/1e4).toFixed(2)+'万';
+    return (neg?'':'+')+s;
+  }
+  // 逐只实时报价（自选股用）
+  function fetchQuoteLight(code){
+    var secid=secidOf(code);
+    var url='https://push2.eastmoney.com/api/qt/stock/get?secid='+secid+'&fields=f43,f57,f58,f170&fltt=2';
+    return fetchJSON(url, 2).then(function(j){
+      if(!j.data || j.data.f43==null) throw new Error('empty');
+      return {code:j.data.f57, name:j.data.f58, price:j.data.f43, pct:j.data.f170};
+    });
+  }
+  // 排行榜列表（板块 / 个股 / 资金）
+  function fetchClist(fs, fields, fid, po){
+    var url='https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=20&po='+(po==null?1:po)
+      + '&np=1&fltt=2&invt=2&fs='+encodeURIComponent(fs)+'&fields='+fields+'&fid='+fid;
+    return fetchJSON(url, 2).then(function(j){
+      if(!j.data || !j.data.diff) throw new Error('empty');
+      return j.data.diff;
+    });
+  }
+
+  /* ============ 通用可排序表格 ============ */
+  var Tables = {
+    inst:{},
+    init:function(id, cfg){
+      this.inst[id]=Object.assign({rows:[], manual:false, sortKey:cfg.defaultKey||null,
+        sortDir:cfg.defaultDir||'desc', expanded:false}, cfg);
+      this.render(id);
+    },
+    setRows:function(id, rows){ var t=this.inst[id]; if(!t) return; t.rows=rows||[]; this.render(id); },
+    sortedRows:function(t){
+      if(!t.sortKey) return t.rows;
+      var k=t.sortKey, dir=t.sortDir==='asc'?1:-1;
+      return t.rows.slice().sort(function(a,b){
+        var x=a[k], y=b[k];
+        if(x==null) x=-Infinity; if(y==null) y=-Infinity;
+        return (x-y)*dir;
+      });
+    },
+    render:function(id){
+      var t=this.inst[id]; if(!t) return;
+      var el=$(t.el); if(!el) return;
+      var rows=this.sortedRows(t);
+      var cap = t.collapse ? (t.expanded ? t.expandedCount : t.collapsedCount) : rows.length;
+      var vis=rows.slice(0, Math.min(rows.length, cap));
+      var self=this;
+      var head='<tr><th class="rank">'+(t.manual ? '<button class="cancel-sort" data-id="'+id+'">取消排序</button>' : '#')+'</th>';
+      t.columns.forEach(function(c){
+        var active=t.sortKey===c.key;
+        var cls='th'+(c.sortable?' sortable':'')+(active?' active':'');
+        var arrow=active ? (' <span class="arrow">'+(t.sortDir==='asc'?'▲':'▼')+'</span>') : '';
+        head+='<th class="'+cls+'"'+(c.sortable?' data-id="'+id+'" data-key="'+c.key+'"':'')+'>'+c.label+arrow+'</th>';
+      });
+      head+='</tr>';
+      var body='';
+      if(!vis.length){
+        body='<tr class="tbl-empty"><td colspan="'+(t.columns.length+1)+'">暂无数据</td></tr>';
+      }
+      vis.forEach(function(r, i){
+        var navCls=r.nav?'nav':'';
+        var tds='<td class="rank">'+(i+1)+'</td>';
+        t.columns.forEach(function(c){
+          var txt = c.fmt ? c.fmt(r[c.key], r) : (r[c.key]==null?'--':r[c.key]);
+          var tdcls='td'+(c.align==='right'?' num':'')+(c.cls?(' '+c.cls(r)):'');
+          tds+='<td class="'+tdcls+'">'+txt+'</td>';
+        });
+        body+='<tr class="'+navCls+'"'+(r.code?' data-code="'+r.code+'"':'')+'>'+tds+'</tr>';
+      });
+      if(t.collapse && rows.length>t.collapsedCount){
+        var label = t.expanded ? '收起 ▲'
+          : ('展开全部 '+(rows.length>t.expandedCount?t.expandedCount:t.collapsedCount)+' / 共'+rows.length+' ▼');
+        body+='<tr class="expand-row" data-id="'+id+'"><td colspan="'+(t.columns.length+1)+'">'+label+'</td></tr>';
+      }
+      el.innerHTML='<table class="mkt-table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
+      el.querySelectorAll('th.sortable').forEach(function(th){
+        th.addEventListener('click', function(){ self.headerClick(id, th.dataset.key); });
+      });
+      var cs=el.querySelector('.cancel-sort');
+      if(cs) cs.addEventListener('click', function(e){ e.stopPropagation(); self.cancel(id); });
+      var ex=el.querySelector('.expand-row');
+      if(ex) ex.addEventListener('click', function(){ self.toggleExpand(id); });
+      el.querySelectorAll('tr.nav').forEach(function(tr){
+        tr.addEventListener('click', function(){ App.load(tr.dataset.code); App.switchView('quote'); });
+      });
+      if(t.allowDel){
+        el.querySelectorAll('.row-del').forEach(function(d){
+          d.addEventListener('click', function(e){ e.stopPropagation(); removeWatch(d.getAttribute('data-code')); App.loadWatch(); });
+        });
+      }
+    },
+    headerClick:function(id, key){
+      var t=this.inst[id]; if(!t) return;
+      if(t.sortKey===key){ t.sortDir = t.sortDir==='desc'?'asc':'desc'; }
+      else { t.sortKey=key; t.sortDir='desc'; }
+      t.manual=true; this.render(id);
+    },
+    cancel:function(id){
+      var t=this.inst[id]; if(!t) return;
+      t.manual=false; t.sortKey=t.defaultKey||null; t.sortDir=t.defaultDir||'desc'; this.render(id);
+    },
+    toggleExpand:function(id){ var t=this.inst[id]; if(!t) return; t.expanded=!t.expanded; this.render(id); }
+  };
+
+  /* ============ 视图切换 / 市场 / 自选 ============ */
+  App.initTables=function(){
+    Tables.init('sector', {el:'tbl-sector', collapse:true, collapsedCount:5, expandedCount:20, defaultKey:'pct', defaultDir:'desc',
+      columns:[
+        {key:'name', label:'板块名称', sortable:false},
+        {key:'pct', label:'涨跌幅', sortable:true, align:'right', fmt:fmtPct, cls:function(r){ return signOf(r.pct); }}
+      ]});
+    Tables.init('gainers', {el:'tbl-gainers', collapse:true, collapsedCount:5, expandedCount:20, defaultKey:'pct', defaultDir:'desc',
+      columns:[
+        {key:'name', label:'名称', sortable:false, nav:true},
+        {key:'price', label:'最新价', sortable:true, align:'right', fmt:fmtPrice},
+        {key:'pct', label:'涨幅', sortable:true, align:'right', fmt:fmtPct, cls:function(r){ return signOf(r.pct); }}
+      ]});
+    Tables.init('inflow', {el:'tbl-inflow', collapse:true, collapsedCount:5, expandedCount:20, defaultKey:'cap', defaultDir:'desc',
+      columns:[
+        {key:'name', label:'名称', sortable:false, nav:true},
+        {key:'price', label:'最新价', sortable:true, align:'right', fmt:fmtPrice},
+        {key:'cap', label:'主力净流入', sortable:true, align:'right', fmt:fmtCapFlow, cls:function(r){ return signOf(r.cap); }},
+        {key:'pct', label:'涨幅', sortable:true, align:'right', fmt:fmtPct, cls:function(r){ return signOf(r.pct); }}
+      ]});
+    Tables.init('watch', {el:'tbl-watch', collapse:true, collapsedCount:5, expandedCount:20, defaultKey:null, defaultDir:'desc', allowDel:true,
+      columns:[
+        {key:'name', label:'名称', sortable:false, nav:true},
+        {key:'price', label:'最新价', sortable:true, align:'right', fmt:fmtPrice},
+        {key:'pct', label:'涨幅', sortable:true, align:'right', fmt:fmtPct, cls:function(r){ return signOf(r.pct); }},
+        {key:'__del', label:'', sortable:false, fmt:function(v, r){ return '<span class="row-del" data-code="'+r.code+'" title="移出自选">&times;</span>'; }}
+      ]});
+  };
+  App.loadMarket=function(){
+    var self=this;
+    Promise.all([
+      fetchClist('m:90+t:2', 'f12,f14,f3,f62', 'f3', 1).then(function(d){ return d.map(function(x){ return {name:x.f14, pct:x.f3}; }); }),
+      fetchClist('m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23', 'f12,f14,f2,f3', 'f3', 1).then(function(d){ return d.map(function(x){ return {code:x.f12, name:x.f14, price:x.f2, pct:x.f3, nav:true}; }); }),
+      fetchClist('m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23', 'f12,f14,f2,f3,f62', 'f62', 1).then(function(d){ return d.map(function(x){ return {code:x.f12, name:x.f14, price:x.f2, pct:x.f3, cap:x.f62, nav:true}; }); })
+    ]).then(function(res){
+      Tables.setRows('sector', res[0]);
+      Tables.setRows('gainers', res[1]);
+      Tables.setRows('inflow', res[2]);
+      self.flashStatus('实时 · 东方财富', 'live');
+    }).catch(function(){
+      self.flashStatus('市场数据获取失败（接口受限）', 'demo');
+    });
+  };
+  App.loadWatch=function(){
+    var w=getWatch();
+    if(!w.length){ Tables.setRows('watch', []); return; }
+    Promise.all(w.map(function(it){
+      return fetchQuoteLight(it.code)
+        .then(function(q){ return {code:it.code, name:q.name||it.name, price:q.price, pct:q.pct, nav:true}; })
+        .catch(function(){ return {code:it.code, name:it.name, price:null, pct:null, nav:true}; });
+    })).then(function(rows){ Tables.setRows('watch', rows); });
+  };
+  App.switchView=function(view){
+    ['quote','market','watch'].forEach(function(v){
+      var sec=$('view-'+v); if(sec) sec.classList.toggle('hidden', v!==view);
+    });
+    var nav=$('mainnav');
+    if(nav) nav.querySelectorAll('.mnav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.view===view); });
+    if(view==='market') this.loadMarket();
+    if(view==='watch') this.loadWatch();
+    if(view==='quote') Chart.resize();
+  };
+  App.refreshWatchBtn=function(code){
+    var wb=$('watchBtn'); if(!wb) return;
+    var w=inWatch(code);
+    wb.textContent = w ? '移出自选' : '加自选';
+    wb.classList.toggle('in', w);
   };
 
   if(document.readyState==='loading'){
