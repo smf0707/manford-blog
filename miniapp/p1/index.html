@@ -59,6 +59,10 @@
   .status .dot{width:7px;height:7px;border-radius:50%;background:var(--down)}
   .status.live .dot{background:var(--down);box-shadow:0 0 0 3px rgba(0,176,112,.18)}
   .status.demo .dot{background:#f5a623;box-shadow:0 0 0 3px rgba(245,166,35,.18)}
+  .status.closed .dot{background:var(--muted2);box-shadow:none}
+  .status.live #statusText::after{content:'';display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;
+    background:var(--down);animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
 
   .wrap{max-width:1180px;margin:0 auto;padding:20px 22px 48px}
 
@@ -151,10 +155,11 @@
 
   /* 行情标题行（名称 + 加自选） */
   .q-title-row{display:flex;align-items:center;gap:14px}
-  .watch-btn{font-size:13px;font-weight:600;padding:7px 15px;border-radius:9px;cursor:pointer;
+  .watch-btn{font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;
     border:1px solid var(--accent);color:var(--accent);background:transparent;transition:.18s;white-space:nowrap}
   .watch-btn:hover{background:rgba(124,92,255,.12)}
-  .watch-btn.in{background:linear-gradient(135deg,var(--accent),#ec4899);color:#fff;border-color:transparent}
+  .watch-btn.in{border-color:var(--muted2);color:var(--muted);background:transparent}
+  .watch-btn.in:hover{background:rgba(138,147,166,.1)}
 
   /* chip 删除角标 */
   .chip{position:relative}
@@ -178,6 +183,9 @@
   .mkt-table th .arrow{font-size:10px;margin-left:3px;color:var(--accent)}
   .mkt-table td.num{text-align:right;font-family:var(--mono)}
   .mkt-table .rank{color:var(--muted2);font-family:var(--mono);width:36px;text-align:center}
+  /* 市场栏目：表头与单元格全部居中对齐（不影响自选表格） */
+  #view-market .mkt-table th, #view-market .mkt-table td{text-align:center}
+  #view-market .mkt-table td.num{text-align:center}
   .mkt-table .t-name{font-weight:600}
   .mkt-table tbody tr.nav{cursor:pointer;transition:background .15s}
   .mkt-table tbody tr.nav:hover{background:rgba(124,92,255,.09)}
@@ -290,8 +298,8 @@
     </div>
 
     <div class="foot">
-      本页为纯静态演示，行情数据在浏览器端实时向东方财富接口请求；若接口受限或离线，会自动降级为示例数据。<br/>
-      仅供学习与研究使用，不构成任何投资建议。
+      本页为纯静态演示，行情数据在浏览器端实时向东方财富接口请求；交易时段内每 3 秒自动刷新报价与 K 线，非交易时段标注「已收盘」。<br/>
+      若接口受限或离线，会自动降级为示例数据。仅供学习与研究使用，不构成任何投资建议。
     </div>
     </section>
 
@@ -372,6 +380,15 @@
   function realName(code){
     for(var i=0;i<PRESETS.length;i++){ if(PRESETS[i].code===code) return PRESETS[i].name; }
     return code;
+  }
+  // 是否处于 A 股交易时段（集合竞价 + 连续竞价）。近似判断：工作日 + 时段，未含法定节假日
+  function isTradingNow(){
+    var d=new Date(), day=d.getDay();
+    if(day===0 || day===6) return false;          // 周末休市
+    var t=d.getHours()*60 + d.getMinutes();
+    var am = t>= 9*60+15 && t<= 11*60+30;          // 9:15 集合竞价起
+    var pm = t>= 13*60   && t<= 15*60;             // 13:00 - 15:00
+    return am || pm;
   }
 
   /* ============ 数据层 ============ */
@@ -501,6 +518,24 @@
       this.viewStart=Math.max(0, len - this.DEF_VIEW);
       this.lockedFull=-1; this.hoverIndex=-1;
       this.tip.classList.remove('show');
+      this.draw();
+    },
+    // 实时刷新：替换全量数据，但保留用户当前的缩放窗口与选中线
+    updateData:function(data, decimal){
+      if(!data || !data.length) return;
+      var len=data.length;
+      if(!this.full.length){ this.setData(data, decimal||this.decimal); return; }
+      var oldLen=this.full.length;
+      var tailGap=oldLen-this.viewEnd;     // 视图末尾距数据末尾的偏移（通常 0，表示看最新）
+      this.full=data;
+      this.decimal=decimal||this.decimal;
+      if(len!==oldLen){
+        this.viewEnd=Math.min(len, len-tailGap);
+        var vc=this.viewEnd-this.viewStart;   // 窗口宽度不变
+        this.viewStart=this.viewEnd-vc;
+        if(this.viewStart<0){ this.viewStart=0; this.viewEnd=vc; }
+        if(this.lockedFull>=len) this.lockedFull=len-1;
+      }
       this.draw();
     },
     schedule:function(){
@@ -689,7 +724,7 @@
       var i=this.indexAtX(mx);
       this.zoomAt(i, e.deltaY<0 ? 0.82 : 1/0.82);
     },
-    // 键盘左右键：移动选中的 K 线（lockedFull），移出视图时自动平移跟随
+    // 键盘左右键：移动选中的 K 线（十字线），K 线图跟随平移（游标浏览历史）
     onKey:function(e){
       if(this.lockedFull<0) return;
       if(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
@@ -703,6 +738,7 @@
       var ni=this.lockedFull+d;
       if(ni<0 || ni>=len) return;
       this.lockedFull=ni;
+      // 选中线移出可见窗口时，图表自动平移跟随；十字线随之移动
       if(ni<this.viewStart){ this.viewStart=ni; this.viewEnd=ni+vc; }
       else if(ni>=this.viewEnd){ this.viewEnd=ni+1; this.viewStart=this.viewEnd-vc; }
       if(this.viewStart<0){ this.viewStart=0; this.viewEnd=vc; }
@@ -779,11 +815,17 @@
   /* ============ 应用 ============ */
   var App = {
     code:'600519', range:'day', fqt:1, cache:{}, quote:null, info:null,
+    _curView:'quote', _timer:null, REALTIME_MS:3000,
     init:function(){
       Chart.init();
       this.initTables();
       this.renderChips();
       this.bind();
+      var self=this;
+      document.addEventListener('visibilitychange', function(){
+        if(document.hidden){ self.stopRealtime(); }
+        else if(self._curView==='quote' && self.code && self.info && !self.info.demo){ self.startRealtime(); }
+      });
       this.load(this.code);
     },
     renderChips:function(){
@@ -850,6 +892,65 @@
       if(demo){ this.flashStatus('示例数据（接口受限）','demo'); }
       else { this.flashStatus('实时 · 东方财富','live'); }
     },
+    setStatusClosed:function(){ this.flashStatus('已收盘 · 下次开盘自动刷新','closed'); },
+    /* ===== 实时刷新（轮询）===== */
+    startRealtime:function(){
+      this.stopRealtime();
+      if(!this.code) return;
+      var self=this;
+      // 仅按间隔轮询；刚发起 load 时已拉过一次数据，避免重复请求
+      this._timer=setInterval(function(){ self.tickRealtime(); }, this.REALTIME_MS);
+    },
+    stopRealtime:function(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } },
+    tickRealtime:function(){
+      if(!this.code) return;
+      if(document.hidden) return;                       // 标签页隐藏时不请求，省流量
+      if(this._curView!=='quote') return;               // 仅行情视图刷新
+      if(!isTradingNow()){ this.setStatusClosed(); return; }  // 非交易时段只标注收盘
+      var self=this, code=this.code, range=this.range, fqt=this.fqt;
+      fetchKline(code, range, fqt).then(function(kd){
+        if(self.code!==code) return;                    // 用户已切换到别的股票
+        if(kd.demo){ self.flashStatus('实时刷新受限','demo'); return; }  // 接口受限，不覆盖实时图表
+        self.updateRealtime(kd);
+        self.flashStatus('实时刷新中','live');
+      }).catch(function(){
+        self.flashStatus('实时刷新受限','demo');
+      });
+    },
+    // 用最新 K 线更新报价头与图表（保留用户窗口/选中）
+    updateRealtime:function(kd){
+      var info=this.info; if(!info) return;
+      var data=kd.klines;
+      var last=data[data.length-1], prev=data[data.length-2]||last;
+      var preC=prev.close;
+      var price=last.close, chg=price-preC, pct=preC?chg/preC*100:0;
+      var pEl=$('qPrice'), cEl=$('qChg');
+      pEl.textContent=fmtPrice(price, info.decimal);
+      pEl.className='q-price '+(chg>=0?'up':'down');
+      cEl.textContent=fmtPct(chg)+'  '+fmtPrice(chg, info.decimal);
+      cEl.className='q-chg '+(chg>=0?'up':'down');
+      var q=info.quote;
+      var stats=[
+        ['今开', fmtPrice(last.open, info.decimal), last.open>=preC?'up':'down'],
+        ['昨收', fmtPrice(preC, info.decimal), ''],
+        ['最高', fmtPrice(last.high, info.decimal), last.high>=preC?'up':'down'],
+        ['最低', fmtPrice(last.low, info.decimal), last.low>=preC?'up':'down'],
+        ['成交量', fmtVol(last.vol), ''],
+        ['成交额', fmtAmount(last.amount), ''],
+        ['振幅', last.amp.toFixed(2)+'%', ''],
+        ['换手率', last.turnover.toFixed(2)+'%', '']
+      ];
+      if(q){
+        if(q.pe!=null) stats.push(['市盈率TTM', q.pe.toFixed(2), '']);
+        if(q.totalCap!=null) stats.push(['总市值', fmtCap(q.totalCap), '']);
+        if(q.floatCap!=null) stats.push(['流通市值', fmtCap(q.floatCap), '']);
+      }
+      $('stats').innerHTML = stats.map(function(s){
+        return '<div class="stat"><span class="s-label">'+s[0]+'</span>'
+          + '<span class="s-val '+(s[2]||'')+'">'+s[1]+'</span></div>';
+      }).join('');
+      Chart.updateData(data, info.decimal);
+    },
     showOverlay:function(on){ $('overlay').classList.toggle('show', !!on); },
     load:function(code, keepRange){
       var self=this;
@@ -883,6 +984,10 @@
         self.info = { name:realName(code), code:kd.code, decimal:kd.decimal, demo:!!kd.demo, quote:q };
         self.render(kd, self.info);
         self.setStatusLive(!!kd.demo);
+        if(!self.info.demo){
+          self.startRealtime();                       // 真实数据：开启实时轮询
+          if(!isTradingNow()) self.setStatusClosed(); // 非交易时段即时标注收盘
+        }
         addRecent(code, self.info.name);
         self.renderChips();
       }).catch(function(){
@@ -1131,6 +1236,7 @@
     })).then(function(rows){ Tables.setRows('watch', rows); });
   };
   App.switchView=function(view){
+    this._curView=view;
     ['quote','market','watch'].forEach(function(v){
       var sec=$('view-'+v); if(sec) sec.classList.toggle('hidden', v!==view);
     });
@@ -1138,7 +1244,12 @@
     if(nav) nav.querySelectorAll('.mnav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.view===view); });
     if(view==='market') this.loadMarket();
     if(view==='watch') this.loadWatch();
-    if(view==='quote') Chart.resize();
+    if(view==='quote'){
+      Chart.resize();
+      if(this.code && !this.info.demo) this.startRealtime();
+    } else {
+      this.stopRealtime();
+    }
   };
   App.refreshWatchBtn=function(code){
     var wb=$('watchBtn'); if(!wb) return;
