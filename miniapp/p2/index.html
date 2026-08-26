@@ -5,21 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>旅游目的地地图 · 项目2</title>
+  <link rel="stylesheet" href="../../styles.css" />
   <style>
     :root {
-      --bg: radial-gradient(1200px 820px at 76% -12%, rgba(124, 92, 255, .20), transparent 55%),
-        radial-gradient(900px 720px at 8% 112%, rgba(255, 92, 168, .12), transparent 55%),
-        #0a0e1a;
-      --panel: rgba(20, 26, 42, .55);
-      --panel2: rgba(14, 19, 32, .55);
-      --line: rgba(124, 92, 255, .22);
-      --text: #eef1f8;
-      --muted: #aab1c6;
-      --muted2: #6f7790;
-      --accent: #8b5cff;
+      /* 仅保留博客 styles.css 未定义的专有变量；其余 design token 复用博客 :root */
       --up: #ff5b6e;
-      --sans: 'Inter', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
     }
 
     * {
@@ -40,7 +30,7 @@
       background: var(--bg);
       background-attachment: fixed;
       color: var(--text);
-      font-family: var(--sans);
+      font-family: var(--font);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
@@ -59,7 +49,7 @@
       justify-content: space-between;
       gap: 14px;
       padding: 14px 22px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid var(--hairline);
       background: rgba(12, 16, 24, .72);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -84,7 +74,7 @@
       display: grid;
       place-items: center;
       border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), #ec4899);
+      background: linear-gradient(135deg, var(--violet), #ec4899);
       color: #fff
     }
 
@@ -142,13 +132,13 @@
       flex: 1;
       min-width: 130px;
       height: 44px;
-      border: 1px solid var(--line);
-      background: var(--panel);
+      border: 1px solid var(--hairline);
+      background: var(--surface);
       color: var(--text);
       border-radius: 10px;
       padding: 0 12px;
       font-size: 14px;
-      font-family: var(--sans);
+      font-family: var(--font);
       outline: none
     }
 
@@ -163,20 +153,20 @@
     }
 
     .t-in::placeholder {
-      color: var(--muted2)
+      color: rgba(148,163,184,0.6)
     }
 
     .t-go {
       height: 44px;
       padding: 0 22px;
       border: none;
-      background: linear-gradient(135deg, var(--accent), #a06bff);
+      background: linear-gradient(135deg, var(--violet), #a06bff);
       color: #fff;
       border-radius: 10px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      font-family: var(--sans);
+      font-family: var(--font);
       white-space: nowrap
     }
 
@@ -210,8 +200,8 @@
       gap: 12px;
       align-items: flex-start;
       padding: 12px 14px;
-      background: var(--panel);
-      border: 1px solid var(--line);
+      background: var(--surface);
+      border: 1px solid var(--hairline);
       border-radius: 12px;
       cursor: pointer;
       transition: border-color .15s, transform .15s;
@@ -220,7 +210,7 @@
 
     .t-item:hover,
     .t-item.active {
-      border-color: var(--accent);
+      border-color: var(--violet);
       transform: translateX(2px)
     }
 
@@ -232,7 +222,7 @@
       border-radius: 8px;
       font-weight: 700;
       font-size: 13px;
-      background: linear-gradient(135deg, var(--accent), #a06bff);
+      background: linear-gradient(135deg, var(--violet), #a06bff);
       color: #fff;
       font-family: var(--mono)
     }
@@ -256,8 +246,8 @@
       font-size: 11px;
       color: var(--muted);
       font-weight: 400;
-      background: var(--panel2);
-      border: 1px solid var(--line);
+      background: var(--glass-strong);
+      border: 1px solid var(--hairline);
       padding: 1px 7px;
       border-radius: 6px
     }
@@ -294,7 +284,7 @@
       width: 100%;
       height: 5px;
       border-radius: 3px;
-      background: var(--panel2);
+      background: var(--glass-strong);
       overflow: hidden;
       position: relative
     }
@@ -314,8 +304,8 @@
       padding: 30px;
       text-align: center;
       color: var(--muted);
-      background: var(--panel);
-      border: 1px dashed var(--line);
+      background: var(--surface);
+      border: 1px dashed var(--hairline);
       border-radius: 12px
     }
 
@@ -325,8 +315,8 @@
       position: relative;
       height: 64vh;
       min-height: 420px;
-      background: var(--panel2);
-      border: 1px solid var(--line);
+      background: var(--glass-strong);
+      border: 1px solid var(--hairline);
       border-radius: 14px;
       overflow: hidden
     }
@@ -387,7 +377,7 @@
     .t-mapnotice .mn-ic {
       width: 42px;
       height: 42px;
-      color: var(--accent)
+      color: var(--violet)
     }
 
     .t-mapnotice p {
@@ -397,7 +387,7 @@
 
     .t-mapnotice .mn-sub {
       font-size: 12px;
-      color: var(--muted2);
+      color: rgba(148,163,184,0.6);
       max-width: 330px;
       line-height: 1.6
     }
@@ -418,7 +408,7 @@
     .t-foot {
       margin-top: 14px;
       text-align: center;
-      color: var(--muted2);
+      color: rgba(148,163,184,0.6);
       font-size: 12px;
       letter-spacing: .3px
     }
@@ -443,6 +433,8 @@
 </head>
 
 <body>
+  <div class="bg-aurora"></div>
+  <div class="bg-grain"></div>
   <header class="topbar">
     <a class="brand" href="https://smf0707.github.io/manford-blog/">
       <span class="logo">
@@ -483,6 +475,12 @@
        获取：高德开放平台 console.amap.com → 应用管理 → 创建应用 → 添加 Key
        → 服务平台选「Web端(JS API)」→ 得到 key 与 安全密钥(securityJsCode)
        把下面的占位替换成你自己的即可。 */
+    /* 同步博客皮肤：读取博客存的主题（nebula-theme）并应用，实现皮肤联动 */
+    try {
+      var _t = localStorage.getItem('nebula-theme');
+      if (_t && _t !== 'dark') document.documentElement.setAttribute('data-theme', _t);
+    } catch (e) {}
+
     var AMAP_KEY = '240b76a8767e420891ee663673bab5b5';
     var AMAP_SECRET = '0f7c5b9c7cf3c729834c45c0bfcc168e';
 
