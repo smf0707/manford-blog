@@ -50,7 +50,8 @@
       gap: 14px;
       padding: 14px 22px;
       border-bottom: 1px solid var(--hairline);
-      background: rgba(12, 16, 24, .72);
+      background: var(--menu-bg);
+      transition: background .45s ease, border-color .45s ease;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       position: sticky;
@@ -571,7 +572,7 @@
       mapReady: function () {
         var self = this;
         if (this.map) return;
-        this.map = new AMap.Map(this.mapEl, { zoom: 5, center: [104, 36], viewMode: '2D', mapStyle: 'amap://styles/dark', resizeEnable: true });
+        this.map = new AMap.Map(this.mapEl, { zoom: 5, center: [104, 36], viewMode: '2D', mapStyle: 'amap://styles/normal', resizeEnable: true });
         this.map.on('click', function () { if (self.info) self.info.close(); });
         if (this.results.length) this.addMarkers(this.results);
       },

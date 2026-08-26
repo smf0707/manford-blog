@@ -25,6 +25,20 @@
     --mono:"SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   }
+
+  /* 顶栏跟随博客主题（深色 / 浅色 / 绿金）：dark 维持原样，light/green 覆盖 */
+  [data-theme="light"] .topbar{ background:rgba(255,255,255,.92); border-bottom-color:rgba(15,23,42,.12); }
+  [data-theme="light"] .topbar .links,
+  [data-theme="light"] .brand small{ color:#475569; }
+  [data-theme="light"] .topbar .links a:hover{ color:#0A0B1A; }
+  [data-theme="light"] .brand .logo{ background:linear-gradient(135deg,#7C3AED,#EC4899); }
+
+  [data-theme="green"] .topbar{ background:rgba(8,24,17,.92); border-bottom-color:rgba(170,225,195,.16); }
+  [data-theme="green"] .topbar .links,
+  [data-theme="green"] .brand small{ color:#90BFA6; }
+  [data-theme="green"] .topbar .links a:hover{ color:#EDF7EF; }
+  [data-theme="green"] .brand .logo{ background:linear-gradient(135deg,#3DDC97,#E6B450); }
+
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
@@ -412,6 +426,10 @@
   </div>
 
 <script>
+(function(){
+  /* 顶栏跟随博客主题：读取首页存的主题并应用到 data-theme（dark 用默认） */
+  try { var _t = localStorage.getItem('nebula-theme'); if (_t && _t !== 'dark') document.documentElement.setAttribute('data-theme', _t); } catch(e){}
+})();
 (function(){
   "use strict";
 
