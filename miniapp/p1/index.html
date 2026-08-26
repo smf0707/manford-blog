@@ -207,6 +207,44 @@
     #chart{height:430px}
     .wrap{padding:16px 14px 40px}
   }
+  /* 网格交易规划器 */
+  #gridPanel{display:none;margin-top:14px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  #gridPanel h3{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  #gridPanel h3 .sub{font-size:12px;color:var(--muted);font-weight:500}
+  #gridPanel .gwarn{font-size:12px;color:var(--muted2);margin-bottom:14px;line-height:1.6}
+  .g-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px 18px}
+  .g-field{display:flex;flex-direction:column;gap:6px}
+  .g-field label{font-size:12px;color:var(--muted)}
+  .g-field input,.g-field select{background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    border-radius:9px;padding:8px 10px;font-size:14px;font-family:var(--mono);outline:0}
+  .g-field input:focus,.g-field select:focus{border-color:var(--accent)}
+  .g-field .hint{font-size:11px;color:var(--muted2)}
+  .g-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center}
+  .g-btn{border:0;background:linear-gradient(135deg,var(--accent),#ec4899);color:#fff;
+    padding:9px 18px;border-radius:10px;font-weight:600;cursor:pointer;font-size:13px}
+  .g-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .g-btn:active{transform:translateY(1px)}
+  .g-adv{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+  .g-adv summary{cursor:pointer;font-size:13px;color:var(--muted);list-style:none}
+  .g-adv summary::-webkit-details-marker{display:none}
+  #gridStatus{font-size:13px;color:var(--text);margin-top:12px;font-family:var(--mono);line-height:1.7}
+  #gridStatus .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin:0 2px}
+  .g-cap{margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;font-family:var(--mono)}
+  .g-cap .cap-item{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 12px;min-width:118px}
+  .g-cap .cap-label{color:var(--muted);font-size:11px}
+  .g-cap .cap-val{color:var(--text);font-size:15px;font-weight:700;margin-top:3px}
+  .g-cap .cap-val.up{color:var(--up)} .g-cap .cap-val.down{color:var(--down)}
+  .g-res{margin-top:10px}
+  .g-res .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+  .g-res-title{font-size:13px;font-weight:700;margin:16px 0 6px;color:var(--muted)}
+  .g-trades{margin-top:8px;max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+  .g-trades table{width:100%;border-collapse:collapse;font-size:12px}
+  .g-trades th,.g-trades td{padding:7px 10px;text-align:right;border-bottom:1px solid rgba(255,255,255,.05);font-family:var(--mono);white-space:nowrap}
+  .g-trades th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--panel);z-index:1}
+  .g-trades td:first-child,.g-trades th:first-child{text-align:left}
+  .g-trades td.b{color:var(--down)} .g-trades td.s{color:var(--up)}
+  @media(max-width:760px){ #gridPanel .g-grid{grid-template-columns:1fr 1fr} }
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -230,6 +268,7 @@
       <button class="mnav-btn active" data-view="quote">行情</button>
       <button class="mnav-btn" data-view="market">市场</button>
       <button class="mnav-btn" data-view="watch">自选股</button>
+      <button class="mnav-btn" data-view="grid">网格</button>
     </nav>
 
     <!-- 行情视图（K线 + 搜索） -->
@@ -296,6 +335,49 @@
       </div>
       <div class="chart-hint">滚轮缩放 · 拖动平移 · 点击锁定光标 · ← → 移动选中</div>
       <div class="overlay" id="overlay"><span class="spinner"></span><span>正在获取行情数据…</span></div>
+    </div>
+
+    <!-- 网格交易规划器 -->
+    <div id="gridPanel">
+      <h3>网格交易规划器 <span class="sub">模拟回测 · 不可真实下单</span></h3>
+      <div class="gwarn">参数对齐主流股票 App（同花顺 / 东方财富 / 华泰涨乐）：基准价（价格中枢）、网格步长（百分比或价格）、价格区间上下限、每格委托数量、加仓策略、回落卖出 / 反弹买入、有效期。本页为纯静态演示，无券商接口，仅做参数规划与历史日 K 模拟回测，不构成投资建议。</div>
+      <div class="g-grid">
+        <div class="g-field"><label>基准价 / 价格中枢</label><input id="gBase" type="number" step="0.01"><span class="hint">初始参考价，默认取当前价</span></div>
+        <div class="g-field"><label>步长类型</label>
+          <select id="gStepType"><option value="pct">百分比 %</option><option value="price">价格</option></select>
+        </div>
+        <div class="g-field"><label>每格步长</label><input id="gStep" type="number" step="0.01" value="2"><span class="hint">% 或 元，主流设 1%–5%</span></div>
+        <div class="g-field"><label>网格数量（格）</label><input id="gGrids" type="number" step="1" placeholder="留空按上下限"><span class="hint">填了自动推算上下限</span></div>
+        <div class="g-field"><label>区间上限</label><input id="gUpper" type="number" step="0.01"><span class="hint">超出上限不再卖出</span></div>
+        <div class="g-field"><label>区间下限</label><input id="gLower" type="number" step="0.01"><span class="hint">跌破下限不再买入</span></div>
+        <div class="g-field"><label>每格委托数量（股）</label><input id="gQty" type="number" step="100" value="100"><span class="hint">A 股 1 手 = 100 股</span></div>
+        <div class="g-field"><label>最大持仓（股）</label><input id="gMaxPos" type="number" step="100" value="0"><span class="hint">0 = 不限制，防满仓</span></div>
+        <div class="g-field"><label>最小底仓（股）</label><input id="gMinBase" type="number" step="100" value="0"><span class="hint">0 = 无底仓，防空仓</span></div>
+      </div>
+      <div class="g-cap" id="gCap"></div>
+      <details class="g-adv">
+        <summary>高级参数（加仓策略 / 回落反弹 / 整体止盈止损 / 有效期）</summary>
+        <div class="g-grid" style="margin-top:12px">
+          <div class="g-field"><label>加仓策略</label>
+            <select id="gStrat"><option value="avg">均分（每格相同）</option><option value="pyramid">金字塔（逐格翻倍）</option><option value="martin">马丁格尔（逐格 ×1.5）</option></select>
+          </div>
+          <div class="g-field"><label>回落卖出幅度 %</label><input id="gPull" type="number" step="0.1" value="0"><span class="hint">0 = 关闭；建议远小于步长</span></div>
+          <div class="g-field"><label>反弹买入幅度 %</label><input id="gReb" type="number" step="0.1" value="0"><span class="hint">0 = 关闭</span></div>
+          <div class="g-field"><label>整体止盈价</label><input id="gTP" type="number" step="0.01" value="0"><span class="hint">0 = 不设置；触及清仓止盈</span></div>
+          <div class="g-field"><label>整体止损价</label><input id="gSL" type="number" step="0.01" value="0"><span class="hint">0 = 不设置；触及清仓止损</span></div>
+          <div class="g-field"><label>有效期</label>
+            <select id="gValid"><option value="day">当日有效</option><option value="long" selected>长期有效</option></select>
+            <span class="hint">仅为规划备注，不影响回测</span>
+          </div>
+        </div>
+      </details>
+      <div class="g-row">
+        <button class="g-btn" id="gApply">应用网格（叠加到图表）</button>
+        <button class="g-btn ghost" id="gBacktest">回测（基于日 K）</button>
+        <button class="g-btn ghost" id="gReset">恢复默认</button>
+      </div>
+      <div id="gridStatus"></div>
+      <div class="g-res" id="gridResult"></div>
     </div>
 
     <div class="foot">
@@ -517,7 +599,7 @@
   var Chart = {
     canvas:null, ctx:null, wrap:null, tip:null,
     dpr:1, cssW:0, cssH:0,
-    full:[], range:'day', decimal:2, mode:'kline', preClose:null,
+    full:[], range:'day', decimal:2, mode:'kline', preClose:null, grid:null,
     showMA:{5:true,10:true,20:true},
     viewStart:0, viewEnd:0,
     hoverIndex:-1, lockedFull:-1, hoverY:0,
@@ -733,6 +815,7 @@
         }
         ctx.setLineDash([]); ctx.restore();
       }
+      this.drawGrid(ctx, L, min, max);
     },
     drawTrend:function(){
       var ctx=this.ctx, L=this.layout(), vis=this.vis(), n=vis.length;
@@ -821,6 +904,7 @@
         }
         ctx.setLineDash([]); ctx.restore();
       }
+      this.drawGrid(ctx, L, min, max);
     },
     onMove:function(e){
       if(!this.full.length) return;
@@ -925,6 +1009,28 @@
       this.lockedFull=-1; this.hoverIndex=-1; this.tip.classList.remove('show');
       this.schedule();
     },
+    drawGrid:function(ctx, L, min, max){
+      if(!this.grid || !this.grid.levels || !this.grid.levels.length) return;
+      var padL=this.padL, innerW=L.innerW, self=this;
+      var yP=function(p){ return L.priceBot-(p-min)/(max-min)*(L.priceBot-L.priceTop); };
+      this.grid.levels.forEach(function(lv){
+        if(lv.price<min || lv.price>max) return;
+        var y=yP(lv.price);
+        var col = lv.side==='sell' ? 'rgba(239,35,42,0.55)' : lv.side==='buy' ? 'rgba(0,176,112,0.55)' : 'rgba(124,92,255,0.95)';
+        ctx.save();
+        ctx.setLineDash([4,4]); ctx.strokeStyle=col; ctx.lineWidth=lv.side==='base'?1.8:1;
+        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+innerW,y); ctx.stroke();
+        ctx.setLineDash([]);
+        var tag = lv.side==='base' ? '基准' : (lv.side==='sell'?'卖'+lv.idx:'买'+lv.idx);
+        var c = lv.side==='sell' ? '#ff5a60' : lv.side==='buy' ? '#27d699' : '#b3a4ff';
+        ctx.font='10px '+getMono();
+        var tw=ctx.measureText(tag).width+8;
+        ctx.fillStyle='rgba(12,16,24,0.85)'; ctx.fillRect(padL+2, y-7, tw, 14);
+        ctx.fillStyle=c; ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.fillText(tag, padL+6, y);
+        ctx.restore();
+      });
+    },
     updateTip:function(visIndex, pos){
       var n=this.viewCount();
       if(visIndex<0 || visIndex>=n){ this.tip.classList.remove('show'); return; }
@@ -996,6 +1102,99 @@
   };
   function getMono(){ return '"SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace'; }
 
+  /* ============ 网格交易：参数与回测 ============ */
+  // 由基准价 / 步长 / 区间 推导网格线（供图表叠加与资金预估）
+  function computeGridLevels(cfg){
+    var levels=[], p, i, q0=cfg.qty, st=cfg.strategy;
+    p=cfg.base; i=0;
+    while(i<200){
+      p = cfg.stepType==='pct' ? p*(1+cfg.step/100) : p+cfg.step;
+      i++; if(p>cfg.upper) break;
+      levels.push({price:p, side:'sell', idx:i, qty:qtyForLevel(i,st,q0)});
+    }
+    p=cfg.base; i=0;
+    while(i<200){
+      p = cfg.stepType==='pct' ? p*(1-cfg.step/100) : p-cfg.step;
+      i++; if(p<cfg.lower) break;
+      levels.push({price:p, side:'buy', idx:i, qty:qtyForLevel(i,st,q0)});
+    }
+    levels.push({price:cfg.base, side:'base', idx:0, qty:0});
+    return levels;
+  }
+  // 第 idx 格（距基准第几格）的委托数量：均分 / 金字塔(×2) / 马丁(×1.5)
+  function qtyForLevel(idx, strat, qty0){
+    if(strat==='pyramid') return Math.round(qty0*Math.pow(2, idx-1));
+    if(strat==='martin') return Math.round(qty0*Math.pow(1.5, idx-1));
+    return qty0;
+  }
+  // 基于历史日 K 的网格回测模拟（正确模型）。
+  // 买线位于基准下方、卖线位于基准上方；价格跌破买线 → 买入，涨破卖线 → 卖出（低买高卖捕获步长价差）。
+  // 共享一个持仓：买入入队、卖出按 FIFO 配对实现盈亏；持仓上限 = 全部买线数量×qty，整体有界不会无限累加。
+  // 每根线成对触发：触发后进入「已用」状态，价格回到该线另一侧才重新武装，避免同一线被反复触发。
+  // 回落卖出：触发卖出时需较当日高点回落 >= pullback%；反弹买入：触发买入时需较当日低点反弹 >= rebound%。
+  function simGrid(data, cfg, dec){
+    var base=cfg.base, step=cfg.step, stepType=cfg.stepType, qty0=cfg.qty, strat=cfg.strategy;
+    var upper=cfg.upper, lower=cfg.lower, pull=cfg.pullback||0, reb=cfg.rebound||0;
+    var maxPos=cfg.maxPos||0, minBase=cfg.minBase||0, tp=cfg.tp||0, sl=cfg.sl||0;
+    function build(dir){
+      var arr=[], p=base, i=0;
+      while(i<200){
+        p = stepType==='pct' ? p*(1+dir*step/100) : p+dir*step;
+        i++;
+        if(dir>0 && p>upper) break;
+        if(dir<0 && p<lower) break;
+        arr.push({price:p, side:dir>0?'sell':'buy', idx:i, qty:qtyForLevel(i,strat,qty0), armed:true});
+      }
+      return arr;
+    }
+    var lines=build(1).concat(build(-1));   // 卖线(上) + 买线(下)
+    lines.push({price:base, side:'base', idx:0, qty:0, armed:true});
+    var cap=0; lines.forEach(function(l){ if(l.side==='buy') cap+=l.qty; });        // 全部买线满仓所需股数
+    var initInvest=0; lines.forEach(function(l){ if(l.side==='buy') initInvest+=l.qty*l.price; }); // 计划投入资金
+    // 最小底仓：初始即持有的仓位（防空仓），受计划上限约束
+    if(minBase>cap) minBase=cap;
+    if(minBase*base>initInvest) minBase=Math.floor(initInvest/base);
+    if(minBase<0) minBase=0;
+    var maxTotal = maxPos>0 ? maxPos : (cap+minBase);   // 持仓上限（0=不限制）
+    var pos=minBase, cash=initInvest - minBase*base;     // 初始持仓 + 剩余买力
+    var trades=[], peak=initInvest>0?initInvest:0, maxDD=0, exit=null;
+    for(var d=0; d<data.length; d++){
+      var bar=data[d], hi=bar.high, lo=bar.low, cl=bar.close, dt=bar.date;
+      lines.forEach(function(l){
+        if(l.side==='base') return;
+        if(l.armed){
+          if(l.side==='buy' && lo<=l.price && pos+l.qty<=maxTotal){   // 跌破买线 → 买入（不超上限）
+            if(reb>0 && (cl-lo)/lo < reb/100) return;                 // 反弹幅度不足，跳过
+            l.armed=false; pos+=l.qty; cash-=l.qty*l.price;
+            trades.push({date:dt, side:'买', price:l.price, qty:l.qty, amount:l.qty*l.price, pos:pos});
+          } else if(l.side==='sell' && hi>=l.price && pos>=l.qty){    // 涨破卖线 → 卖出（配对 FIFO）
+            if(pull>0 && (hi-cl)/hi < pull/100) return;               // 回落幅度不足，跳过
+            l.armed=false; pos-=l.qty; cash+=l.qty*l.price;
+            trades.push({date:dt, side:'卖', price:l.price, qty:l.qty, amount:l.qty*l.price, pos:pos});
+          }
+        } else {
+          if(l.side==='buy' && hi>=l.price) l.armed=true;             // 价格涨回买线上方 → 重新武装
+          else if(l.side==='sell' && lo<=l.price) l.armed=true;       // 价格跌回卖线下方 → 重新武装
+        }
+      });
+      // 整体止盈 / 止损：触及即清仓并结束回测
+      if(tp>0 && cl>=tp){ cash+=pos*cl; pos=0; exit='止盈'; break; }
+      if(sl>0 && cl<=sl){ cash+=pos*cl; pos=0; exit='止损'; break; }
+      var val=pos*cl+cash;
+      if(val>peak) peak=val;
+      var dd=peak>0?(peak-val)/peak:0; if(dd>maxDD) maxDD=dd;
+    }
+    var lastCl=data[data.length-1].close;
+    var finalValue=pos*lastCl+cash;
+    var retPct=initInvest>0?(finalValue-initInvest)/initInvest*100:0;
+    var buyCount=0, sellCount=0;
+    trades.forEach(function(t){ if(t.side==='买')buyCount++; else sellCount++; });
+    return { startDate:data[0].date, endDate:data[data.length-1].date, days:data.length,
+      trades:trades, buyCount:buyCount, sellCount:sellCount, finalPos:pos, finalCash:cash,
+      finalValue:finalValue, initInvest:initInvest, retPct:retPct, maxDD:maxDD, gridProfit:cash-initInvest, exit:exit };
+  }
+  function gStat(label, val, cls){ return '<div class="stat"><span class="s-label">'+label+'</span><span class="s-val '+(cls||'')+'">'+val+'</span></div>'; }
+
   /* ============ 应用 ============ */
   var App = {
     code:'600519', range:'day', fqt:1, cache:{}, quote:null, info:null,
@@ -1008,7 +1207,7 @@
       var self=this;
       document.addEventListener('visibilitychange', function(){
         if(document.hidden){ self.stopRealtime(); }
-        else if(self._curView==='quote' && self.code && self.info && !self.info.demo){ self.startRealtime(); }
+        else if(self._curView==='quote' && self.range!=='grid' && self.code && self.info && !self.info.demo){ self.startRealtime(); }
       });
       this.load(this.code);
     },
@@ -1061,6 +1260,21 @@
           self.load(self.code, true);
         });
       });
+      // 网格规划器按钮
+      var ga=$('gApply'); if(ga) ga.addEventListener('click', function(){ self.applyGrid(); });
+      var gb=$('gBacktest'); if(gb) gb.addEventListener('click', function(){ self.runBacktest(); });
+      var gr=$('gReset'); if(gr) gr.addEventListener('click', function(){
+        var cc=self.cache[self.code]; var dd=cc&&cc['day_'+self.fqt];
+        if(dd){ self.fillGridDefaults(dd.klines[dd.klines.length-1].close, self.info.decimal); }
+        Chart.grid=null; Chart.draw();
+        $('gridStatus').textContent=''; $('gridResult').innerHTML='';
+      });
+      // 参数实时预览：输入即更新资金预估，变更即重新叠加网格线
+      ['gBase','gStepType','gStep','gGrids','gUpper','gLower','gQty','gMaxPos','gMinBase','gStrat','gPull','gReb','gTP','gSL'].forEach(function(id){
+        var el=document.getElementById(id); if(!el) return;
+        el.addEventListener('input', function(){ self.previewCapLive(); });
+        el.addEventListener('change', function(){ self.applyGrid(); });
+      });
     },
     onQuery:function(){
       var v=$('codeInput').value.trim();
@@ -1079,8 +1293,12 @@
     setStatusClosed:function(){ this.flashStatus('已收盘 · 下次开盘自动刷新','closed'); },
     updateCtrlVisibility:function(){
       var min = this.range==='min';
-      var ft=$('fqtTabs'); if(ft) ft.style.display = min ? 'none' : '';
-      var mas=$('mas'); if(mas) mas.style.display = min ? 'none' : '';
+      var isGrid = this.range==='grid';
+      var ft=$('fqtTabs'); if(ft) ft.style.display = (min||isGrid) ? 'none' : '';
+      var mas=$('mas'); if(mas) mas.style.display = (min||isGrid) ? 'none' : '';
+      var gp=$('gridPanel'); if(gp) gp.style.display = isGrid ? '' : 'none';
+      var tb=$('tabs'); if(tb) tb.style.display = isGrid ? 'none' : '';
+      if(!isGrid){ Chart.grid=null; }
     },
     /* ===== 实时刷新（轮询）===== */
     startRealtime:function(){
@@ -1095,6 +1313,7 @@
       if(!this.code) return;
       if(document.hidden) return;                       // 标签页隐藏时不请求，省流量
       if(this._curView!=='quote') return;               // 仅行情视图刷新
+      if(this.range==='grid') return;                   // 网格规划器不轮询实时数据
       if(!isTradingNow()){ this.setStatusClosed(); return; }  // 非交易时段只标注收盘
       var self=this, code=this.code, range=this.range, fqt=this.fqt;
       var p = (range==='min') ? fetchTrend(code) : fetchKline(code, range, fqt);
@@ -1184,15 +1403,17 @@
       });
       this.showOverlay(true);
       this.updateCtrlVisibility();
+      var isGrid = this.range==='grid';
+      var dataRange = isGrid ? 'day' : this.range;     // 网格用日K绘制与回测
       var range=this.range, fqt=this.fqt;
-      var key=range+'_'+fqt;
+      var key=dataRange+'_'+fqt;
       var c=this.cache[code];
       var needFetch = !c || !c[key];
       var pData;
       if(range==='min'){
         pData = needFetch ? fetchTrend(code) : Promise.resolve(c[key]);
       } else {
-        pData = needFetch ? fetchKline(code, range, fqt).catch(function(){ return genDemo(code, range, LMT[range]); }) : Promise.resolve(c[key]);
+        pData = needFetch ? fetchKline(code, dataRange, fqt).catch(function(){ return genDemo(code, dataRange, LMT[dataRange]); }) : Promise.resolve(c[key]);
       }
       var pQuote = this.cache[code] && this.cache[code].quote
         ? Promise.resolve(this.cache[code].quote)
@@ -1205,25 +1426,25 @@
         var dispName = (d && d.name) ? d.name : realName(code);
         self.cache[code].name = dispName;
         self.info = { name:dispName, code:d.code, decimal:d.decimal, demo:!!d.demo, quote:q, preClose:d.preClose };
-        self.render(d, self.info);
+        self.render(d, self.info, isGrid);
         self.setStatusLive(!!d.demo);
-        if(!self.info.demo){
+        if(!self.info.demo && !isGrid){
           self.startRealtime();
           if(!isTradingNow()) self.setStatusClosed();
         }
         addRecent(code, self.info.name);
         self.renderChips();
       }).catch(function(){
-        var d = self.range==='min' ? genDemoTrend(code) : genDemo(code, range, LMT[range]);
+        var d = self.range==='min' ? genDemoTrend(code) : genDemo(code, dataRange, LMT[dataRange]);
         self.cache[code]=self.cache[code]||{}; self.cache[code][key]=d;
         self.info={name:(d&&d.name)?d.name:realName(code),code:d.code,decimal:2,demo:true,quote:null,preClose:d.preClose};
-        self.render(d, self.info);
+        self.render(d, self.info, isGrid);
         self.setStatusLive(true);
         addRecent(code, self.info.name);
         self.renderChips();
       }).then(function(){ self.showOverlay(false); });
     },
-    render:function(kd, info){
+    render:function(kd, info, isGrid){
       if(this.range==='min'){ return this.renderTrend(kd, info); }
       var data=kd.klines;   // 全量交给 Chart 管理缩放窗口
       var last=data[data.length-1], prev=data[data.length-2]||last;
@@ -1258,9 +1479,10 @@
           + '<span class="s-val '+(s[2]||'')+'">'+s[1]+'</span></div>';
       }).join('');
       // 图表
-      Chart.range=this.range;
+      Chart.range = isGrid ? 'day' : this.range;
       Chart.setData(data, info.decimal);
       this.bindWatchBtn(info);
+      if(isGrid) this.renderGrid(kd, info);
     },
     renderTrend:function(kd, info){
       var rows=kd.rows; if(!rows.length) return;
@@ -1296,6 +1518,145 @@
       Chart.range=this.range;
       Chart.setTrend(rows, preC, info.decimal);
       this.bindWatchBtn(info);
+    },
+    /* ===== 网格交易规划器 ===== */
+    renderGrid:function(kd, info){
+      var data=kd.klines;
+      var last=data[data.length-1].close;
+      // 每个股票仅在首次进入时填充默认参数，避免覆盖用户已调好的配置
+      if(this._gridCode!==this.code || !this._gridInit){
+        this.fillGridDefaults(last, info.decimal);
+        this._gridInit=true;
+        this._gridCode=this.code;
+        Chart.grid=null;
+        Chart.draw();
+      }
+      this.applyGrid();   // 进入即叠加网格线 + 显示资金预估，避免面板空白
+    },
+    fillGridDefaults:function(last, dec){
+      dec=dec||2;
+      var base=+last.toFixed(dec);
+      $('gBase').value=base;
+      $('gStepType').value='pct';
+      $('gStep').value=2;
+      $('gGrids').value=10;                                  // 默认 10 格，自动推算上下限
+      $('gUpper').value=+(base*Math.pow(1+0.02,10)).toFixed(dec);
+      $('gLower').value=+(base*Math.pow(1-0.02,10)).toFixed(dec);
+      $('gQty').value=100;
+      $('gMaxPos').value=0;                                 // 0 = 不限制
+      $('gMinBase').value=0;                                // 0 = 无底仓
+      $('gStrat').value='avg';
+      $('gPull').value=0;
+      $('gReb').value=0;
+      $('gTP').value=0;
+      $('gSL').value=0;
+      $('gValid').value='long';
+      $('gridStatus').textContent='';
+      $('gridResult').innerHTML='';
+    },
+    readGridForm:function(silent){
+      var dec=this.info?this.info.decimal:2;
+      var base=parseFloat($('gBase').value);
+      var stepType=$('gStepType').value;
+      var step=parseFloat($('gStep').value);
+      var grids=parseInt($('gGrids').value,10)||0;
+      var upper=parseFloat($('gUpper').value);
+      var lower=parseFloat($('gLower').value);
+      // 填了「网格数量」则按基准价 ± 数量×步长 自动推算上下限（贴近主流 App 的「划格子」体验）
+      if(grids>0){
+        if(stepType==='pct'){ upper=base*Math.pow(1+step/100,grids); lower=base*Math.pow(1-step/100,grids); }
+        else { upper=base+step*grids; lower=base-step*grids; }
+        $('gUpper').value=+upper.toFixed(dec);
+        $('gLower').value=+lower.toFixed(dec);
+      }
+      var qty=parseInt($('gQty').value,10)||100;
+      var maxPos=parseInt($('gMaxPos').value,10)||0;
+      var minBase=parseInt($('gMinBase').value,10)||0;
+      var strat=$('gStrat').value;
+      var pull=parseFloat($('gPull').value)||0;
+      var reb=parseFloat($('gReb').value)||0;
+      var tp=parseFloat($('gTP').value)||0;
+      var sl=parseFloat($('gSL').value)||0;
+      function err(m){ if(!silent) $('gridStatus').textContent=m; return null; }
+      if(!(base>0)) return err('请填写有效的基准价');
+      if(!(step>0)) return err('每格步长必须大于 0');
+      if(!(upper>base && lower<base)) return err('区间上限须 > 基准价，下限须 < 基准价');
+      if(pull<0||reb<0) return err('回落/反弹幅度不能为负');
+      if(maxPos<0||minBase<0) return err('最大持仓 / 最小底仓不能为负');
+      if(tp>0 && sl>0 && tp<=sl) return err('止盈价须高于止损价');
+      return {base:base, stepType:stepType, step:step, upper:upper, lower:lower, qty:qty,
+        maxPos:maxPos, minBase:minBase, strategy:strat, pullback:pull, rebound:reb, tp:tp, sl:sl};
+    },
+    applyGrid:function(){
+      var cfg=this.readGridForm();
+      if(!cfg) return;
+      var levels=computeGridLevels(cfg);
+      Chart.grid={ levels:levels, cfg:cfg };
+      Chart.draw();
+      var nS=0, nB=0; levels.forEach(function(l){ if(l.side==='sell')nS++; else if(l.side==='buy')nB++; });
+      var dec=this.info?this.info.decimal:2;
+      $('gridStatus').innerHTML='<span class="tag" style="background:rgba(124,92,255,.18);color:#b3a4ff">已叠加 '+(nS+nB)+' 条网格</span>'
+        + '<span class="tag" style="background:rgba(239,35,42,.15);color:#ff5a60">卖 '+nS+'</span>'
+        + '<span class="tag" style="background:rgba(0,176,112,.15);color:#27d699">买 '+nB+'</span>'
+        + ' &nbsp;基准 '+fmtPrice(cfg.base,dec)+' · 区间 ['+fmtPrice(cfg.lower,dec)+', '+fmtPrice(cfg.upper,dec)+']';
+      this.renderCap(cfg, levels, dec);
+    },
+    renderCap:function(cfg, levels, dec){
+      dec=dec||2;
+      var cap=0, nB=0; levels.forEach(function(l){ if(l.side==='buy'){ cap+=l.qty*l.price; nB++; } });
+      var nS=levels.length-nB-1;
+      var stepPrice = cfg.stepType==='pct' ? cfg.base*cfg.step/100 : cfg.step;
+      var perGrid = stepPrice * cfg.qty;       // 每格低买高卖的价差利润（近似，忽略手续费）
+      var html =
+        '<div class="cap-item"><div class="cap-label">网格数量</div><div class="cap-val">'+nB+' 买 / '+nS+' 卖</div></div>'
+        + '<div class="cap-item"><div class="cap-label">预计占用资金</div><div class="cap-val">'+fmtAmount(cap)+'</div></div>'
+        + '<div class="cap-item"><div class="cap-label">每格预期利润</div><div class="cap-val up">+'+fmtAmount(perGrid)+'</div></div>'
+        + '<div class="cap-item"><div class="cap-label">最大持仓</div><div class="cap-val">'+(cfg.maxPos>0?cfg.maxPos+' 股':'不限制')+'</div></div>'
+        + '<div class="cap-item"><div class="cap-label">最小底仓</div><div class="cap-val">'+(cfg.minBase>0?cfg.minBase+' 股':'无')+'</div></div>'
+        + '<div class="cap-item"><div class="cap-label">止盈 / 止损</div><div class="cap-val">'+(cfg.tp>0?fmtPrice(cfg.tp,dec):'—')+' / '+(cfg.sl>0?fmtPrice(cfg.sl,dec):'—')+'</div></div>';
+      $('gCap').innerHTML=html;
+    },
+    previewCapLive:function(){
+      var cfg=this.readGridForm(true);
+      if(!cfg) return;
+      var levels=computeGridLevels(cfg);
+      this.renderCap(cfg, levels, this.info?this.info.decimal:2);
+    },
+    runBacktest:function(){
+      var cfg=this.readGridForm();
+      if(!cfg) return;
+      var c=this.cache[this.code];
+      var d=c&&c['day_'+this.fqt];
+      if(!d){ $('gridStatus').textContent='回测需要日K数据，请稍候重新进入网格'; return; }
+      var data=d.klines;
+      var dec=this.info?this.info.decimal:2;
+      var r=simGrid(data, cfg, dec);
+      this.renderBacktest(r, cfg, dec);
+    },
+    renderBacktest:function(r, cfg, dec){
+      var retClass=r.retPct>=0?'up':'down', retSign=r.retPct>=0?'+':'';
+      var exitTag = r.exit ? ('<span class="tag" style="background:rgba(239,35,42,.15);color:#ff5a60">已'+r.exit+'清仓</span>') : '';
+      var rows=r.trades.slice(0,200).map(function(t){
+        return '<tr><td>'+t.date+'</td><td class="'+(t.side==='买'?'b':'s')+'">'+t.side+'</td>'
+          + '<td>'+fmtPrice(t.price,dec)+'</td><td>'+t.qty+'</td><td>'+fmtAmount(t.amount)+'</td>'
+          + '<td>'+t.pos+'</td></tr>';
+      }).join('');
+      $('gridResult').innerHTML =
+        '<div class="g-res-title">回测结果（'+r.startDate+' ~ '+r.endDate+'，共 '+r.days+' 个交易日）'+exitTag+'</div>'
+        + '<div class="g-res"><div class="stat">'
+          + gStat('区间收益', retSign+r.retPct.toFixed(2)+'%', retClass)
+          + gStat('网格净收益', (r.gridProfit>=0?'+':'')+fmtAmount(r.gridProfit), r.gridProfit>=0?'up':'down')
+          + gStat('最大回撤', (r.maxDD*100).toFixed(2)+'%', 'down')
+          + gStat('预计占用资金', fmtAmount(r.initInvest), '')
+          + gStat('成交笔数', (r.buyCount+r.sellCount)+' 笔', '')
+          + gStat('买入 / 卖出', r.buyCount+' / '+r.sellCount, '')
+          + gStat('期末持仓', r.finalPos+' 股', '')
+          + gStat('期末现金', fmtAmount(r.finalCash), '')
+          + gStat('期末市值', fmtAmount(r.finalValue), '')
+        + '</div></div>'
+        + '<div class="g-res-title">成交明细（前 200 笔，共 '+r.trades.length+' 笔）</div>'
+        + '<div class="g-trades"><table><thead><tr><th>日期</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>持仓</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+      $('gridStatus').innerHTML='<span class="tag" style="background:rgba(124,92,255,.18);color:#b3a4ff">回测完成</span> &nbsp;数据区间 '+r.startDate+' ~ '+r.endDate+(r.exit?(' · 已'+r.exit):'');
     },
     bindWatchBtn:function(info){
       var wb=$('watchBtn');
@@ -1498,18 +1859,31 @@
   };
   App.switchView=function(view){
     this._curView=view;
+    var real = (view==='grid') ? 'quote' : view;   // 网格复用行情视图的图表与面板
     ['quote','market','watch'].forEach(function(v){
-      var sec=$('view-'+v); if(sec) sec.classList.toggle('hidden', v!==view);
+      var show = (v===real) || (view==='grid' && v==='quote');
+      var sec=$('view-'+v); if(sec) sec.classList.toggle('hidden', !show);
     });
     var nav=$('mainnav');
     if(nav) nav.querySelectorAll('.mnav-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.view===view); });
-    if(view==='market') this.loadMarket();
-    if(view==='watch') this.loadWatch();
-    if(view==='quote'){
+    if(view==='grid'){
+      this.range='grid';
+      this.updateCtrlVisibility();          // 显示网格面板、隐藏 K线tabs/复权/MA
       Chart.resize();
-      if(this.code && !this.info.demo) this.startRealtime();
-    } else {
+      if(this.code) this.load(this.code, true);
       this.stopRealtime();
+    } else {
+      if(view==='market') this.loadMarket();
+      if(view==='watch') this.loadWatch();
+      if(view==='quote'){
+        if(this.range==='grid'){ this.range='day'; }   // 从网格返回，复位为日K
+        this.updateCtrlVisibility();
+        var tabs=$('tabs'); if(tabs) tabs.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.dataset.range==='day'); });
+        Chart.resize();
+        if(this.code && !this.info.demo) this.startRealtime();
+      } else {
+        this.stopRealtime();
+      }
     }
   };
   App.refreshWatchBtn=function(code){
