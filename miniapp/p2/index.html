@@ -182,6 +182,23 @@
       letter-spacing: .3px
     }
 
+    .t-more {
+      align-self: center;
+      margin: 4px auto 0;
+      padding: 9px 22px;
+      border: 1px solid var(--hairline);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: border-color .2s, background .2s
+    }
+
+    .t-more:hover { border-color: var(--violet); background: var(--glass-strong); }
+
     .t-body {
       display: flex;
       gap: 16px;
@@ -456,10 +473,11 @@
     <div class="t-search">
       <select id="tProv" class="t-sel" aria-label="选择省份"></select>
       <select id="tCity" class="t-sel" aria-label="选择城市"></select>
-      <input id="tInput" class="t-in" type="text" placeholder="或输入 省份 / 省份 城市，如：广东、广东 广州" />
+      <select id="tDist" class="t-sel" aria-label="选择区县"></select>
+      <input id="tInput" class="t-in" type="text" placeholder="或输入 省份 / 市 / 区，如：广东、广东 广州、广州 番禺" />
       <button id="tGo" class="t-go">搜索</button>
     </div>
-    <div class="t-sub" id="tSub">全国最热门目的地 Top 10</div>
+    <div class="t-sub" id="tSub">全国最热门目的地</div>
     <div class="t-body">
       <div class="t-list" id="tList"></div>
       <div class="t-mapwrap">
@@ -471,6 +489,7 @@
   </main>
 
   <script src="travel-data.js"></script>
+  <script src="travel-dist.js"></script>
   <script>
     /* 高德地图 Web 端 JS API 密钥（必填）
        获取：高德开放平台 console.amap.com → 应用管理 → 创建应用 → 添加 Key
@@ -492,17 +511,24 @@
       cleanName: function (p) { return (p || '').replace(/(省|市|自治区|特别行政区|壮族|回族|维吾尔)/g, ''); },
       init: function () {
         var self = this;
-        this.data = window.TRAVEL_DATA || [];
+        this.data = (window.TRAVEL_DATA || []).map(function (d) {
+          d.dist = (window.TRAVEL_DIST && window.TRAVEL_DIST[d.name]) || d.city || '';
+          return d;
+        });
+        this.expanded = false;
         this.provSel = document.getElementById('tProv');
         this.citySel = document.getElementById('tCity');
+        this.distSel = document.getElementById('tDist');
         this.input = document.getElementById('tInput');
         this.list = document.getElementById('tList');
         this.mapEl = document.getElementById('tMap');
         this.sub = document.getElementById('tSub');
         if (!this.mapEl) return;
         this.fillProv();
+        this.onProv();
         this.provSel.addEventListener('change', function () { self.onProv(); self.search(); });
-        this.citySel.addEventListener('change', function () { self.search(); });
+        this.citySel.addEventListener('change', function () { self.onCity(); self.search(); });
+        this.distSel.addEventListener('change', function () { self.search(); });
         document.getElementById('tGo').addEventListener('click', function () { self.search(); });
         this.input.addEventListener('keydown', function (e) { if (e.key === 'Enter') self.search(); });
         this.search();
@@ -519,51 +545,78 @@
         this.data.forEach(function (d) { if ((!pv || d.prov === pv) && !seen[d.city]) { seen[d.city] = 1; cities.push(d.city); } });
         this.citySel.innerHTML = '<option value="">全部城市</option>' + cities.map(function (c) { return '<option value="' + c + '">' + c + '</option>'; }).join('');
         this.citySel.value = '';
+        this.onCity();
+      },
+      onCity: function () {
+        var pv = this.provSel.value, cv = this.citySel.value;
+        if (!pv && !cv) { this.distSel.innerHTML = '<option value="">全部区县</option>'; this.distSel.value = ''; return; }
+        var seen = {}, dists = [];
+        this.data.forEach(function (d) {
+          if ((!pv || d.prov === pv) && (!cv || d.city === cv) && d.dist && !seen[d.dist]) { seen[d.dist] = 1; dists.push(d.dist); }
+        });
+        dists.sort();
+        this.distSel.innerHTML = '<option value="">全部区县</option>' + dists.map(function (x) { return '<option value="' + x + '">' + x + '</option>'; }).join('');
+        this.distSel.value = '';
       },
       parseInput: function () {
         var raw = (this.input.value || '').trim();
-        var prov = this.provSel.value, city = this.citySel.value;
+        var prov = this.provSel.value, city = this.citySel.value, dist = this.distSel.value;
         if (raw) {
-          var parts = raw.split(/\s+/), p0 = parts[0], hit = '';
+          var parts = raw.split(/\s+/), p0 = parts[0], hitP = '', hitC = '';
           this.data.forEach(function (d) {
-            if (d.prov.indexOf(p0) >= 0) hit = d.prov;
-            else { var cn = Travel.cleanName(d.prov); if (cn && p0.indexOf(cn) >= 0) hit = d.prov; }
+            if (d.prov.indexOf(p0) >= 0) hitP = d.prov;
+            else { var cn = Travel.cleanName(d.prov); if (cn && p0.indexOf(cn) >= 0) hitP = d.prov; }
+            if (d.city.indexOf(p0) >= 0) hitC = d.city;
           });
-          if (hit) prov = hit;
-          if (parts[1]) city = parts[1];
+          if (hitP) {
+            prov = hitP;
+            if (parts[1]) city = parts[1];
+            if (parts[2]) dist = parts[2];
+          } else if (hitC) {
+            city = hitC;
+            if (parts[1]) dist = parts[1];
+          }
         }
-        return { prov: prov, city: city };
+        return { prov: prov, city: city, dist: dist };
       },
       search: function () {
+        this.expanded = false;
         var q = this.parseInput();
         var r = this.data.filter(function (d) {
           if (q.prov && d.prov !== q.prov) return false;
           if (q.city && d.city.indexOf(q.city) < 0) return false;
+          if (q.dist && d.dist.indexOf(q.dist) < 0) return false;
           return true;
         });
         r.sort(function (a, b) { return b.heat - a.heat; });
-        var top = r.slice(0, 10);
+        var top = r.slice(0, 20);
         this.results = top;
-        this.renderList(top, q);
-        this.addMarkers(top);
+        this.lastQ = q; this.lastTotal = r.length;
+        this.renderList(top, q, r.length);
+        if (this.map) this.addMarkers(top);
       },
-      renderList: function (top, q) {
+      renderList: function (top, q, total) {
         var self = this;
-        if (!q.prov) this.sub.textContent = '全国最热门目的地 Top ' + top.length;
-        else {
-          var p = Travel.cleanName(q.prov);
-          this.sub.textContent = (q.city ? (p + ' · ' + q.city) : p) + ' 热门目的地 Top ' + top.length;
-        }
-        if (!top.length) { this.list.innerHTML = '<div class="t-empty">未找到匹配的旅游目的地，试试其他省份或城市</div>'; return; }
-        this.list.innerHTML = top.map(function (d, i) {
-          var p = Travel.cleanName(d.prov);
+        var p = Travel.cleanName(q.prov || (this.provSel.value ? this.provSel.value : ''));
+        var head = !q.prov ? '全国最热门目的地' : (p + (q.city ? ' · ' + q.city : '') + (q.dist ? ' · ' + q.dist : ''));
+        this.sub.textContent = head + ' · 共 ' + total + ' 个，按热度展示前 ' + Math.min(top.length, 20);
+        if (!top.length) { this.list.innerHTML = '<div class="t-empty">未找到匹配的旅游目的地，试试其他省份 / 城市 / 区县</div>'; return; }
+        var limit = (this.expanded || top.length <= 10) ? top.length : 10;
+        this.list.innerHTML = top.slice(0, limit).map(function (d, i) {
+          var pp = Travel.cleanName(d.prov);
+          var tag = pp + '·' + d.city + (d.dist && d.dist !== d.city ? '·' + d.dist : '');
           return '<div class="t-item" data-i="' + i + '">'
             + '<div class="t-rank">' + (i + 1) + '</div>'
-            + '<div class="t-info"><div class="t-name">' + d.name + ' <span class="t-city">' + p + '·' + d.city + '</span></div>'
+            + '<div class="t-info"><div class="t-name">' + d.name + ' <span class="t-city">' + tag + '</span></div>'
             + '<div class="t-desc">' + d.desc + '</div></div>'
             + '<div class="t-heat"><span class="t-bar" style="--w:' + d.heat + '%"></span><b>' + d.heat + '</b></div>'
             + '</div>';
         }).join('');
+        if (top.length > 10) {
+          var left = top.length - 10;
+          this.list.innerHTML += '<button class="t-more" id="tMore">' + (this.expanded ? '收起' : ('展开剩余 ' + left + ' 个')) + '</button>';
+          document.getElementById('tMore').addEventListener('click', function () { self.expanded = !self.expanded; self.renderList(self.results, self.lastQ, self.lastTotal); });
+        }
         Array.prototype.forEach.call(this.list.querySelectorAll('.t-item'), function (el) {
           el.addEventListener('click', function () { self.focusPoint(parseInt(el.dataset.i, 10)); });
         });
