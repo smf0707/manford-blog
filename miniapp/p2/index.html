@@ -412,6 +412,22 @@
       line-height: 1.6
     }
 
+    .t-retry {
+      margin-top: 6px;
+      padding: 9px 22px;
+      border: none;
+      background: linear-gradient(135deg, var(--violet), #a06bff);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      white-space: nowrap
+    }
+
+    .t-retry:active { transform: translateY(1px); }
+
     .t-maphint {
       position: absolute;
       left: 10px;
@@ -434,6 +450,24 @@
     }
 
     @media (max-width:780px) {
+      .t-search {
+        gap: 8px
+      }
+
+      .t-sel {
+        flex: 1 1 0;
+        min-width: 0
+      }
+
+      .t-in {
+        flex: 1 1 auto;
+        min-width: 0
+      }
+
+      .t-go {
+        flex: 0 0 auto
+      }
+
       .t-body {
         flex-direction: column
       }
@@ -675,16 +709,33 @@
           + '<p>地图需要配置高德地图 Key</p>'
           + '<p class="mn-sub">在 miniapp/p2/index.html 顶部把 AMAP_KEY / AMAP_SECRET 换成你自己的「Web 端 JS API」密钥（高德开放平台获取），地图即可显示并可缩放到街道建筑级。</p>'
           + '</div>';
+      },
+      showLoadFail: function () {
+        if (!this.mapEl) return;
+        var self = this;
+        this.mapEl.innerHTML = '<div class="t-mapnotice">'
+          + '<span class="mn-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>'
+          + '<p>地图加载失败或网络受限</p>'
+          + '<p class="mn-sub">当前网络（如手机流量）可能无法访问高德地图服务，或加载较慢。建议切换到 WiFi 后点下方「重新加载」；若在 App 内置浏览器打开，请用系统浏览器打开本页。</p>'
+          + '<button class="t-retry" id="tRetry">重新加载</button>'
+          + '</div>';
+        var btn = document.getElementById('tRetry');
+        if (btn) btn.addEventListener('click', function () {
+          self.mapEl.innerHTML = '';
+          if (window.AMap && self.map) { try { self.map.destroy(); } catch (e) {} self.map = null; self.markers = null; }
+          loadAmap();
+        });
       }
     };
 
     function loadAmap() {
       if (!AMAP_KEY || AMAP_KEY.indexOf('YOUR_') === 0) { Travel.showNotice(); return; }
       window._AMapSecurityConfig = { securityJsCode: AMAP_SECRET };
-      var t = setTimeout(function () { if (!window.AMap) Travel.showNotice(); }, 9000);
-      window.__onAmapReady = function () { clearTimeout(t); Travel.mapReady(); };
+      if (window.__amapTimer) clearTimeout(window.__amapTimer);
+      window.__amapTimer = setTimeout(function () { if (!window.AMap) Travel.showLoadFail(); }, 15000);
+      window.__onAmapReady = function () { clearTimeout(window.__amapTimer); Travel.mapReady(); };
       var s = document.createElement('script');
-      s.src = 'https://webapi.amap.com/maps?v=2.0&key=' + encodeURIComponent(AMAP_KEY) + '&callback=__onAmapReady';
+      s.src = 'https://webapi.amap.com/maps?v=2.0&key=' + encodeURIComponent(AMAP_KEY) + '&callback=__onAmapReady&_=' + Date.now();
       s.async = true; document.head.appendChild(s);
     }
 
