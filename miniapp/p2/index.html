@@ -486,6 +486,7 @@
       }
 
       .t-mapwrap {
+        flex: none;
         width: 100%;
         height: 56vh
       }
@@ -670,6 +671,7 @@
         if (this.map) return;
         this.map = new AMap.Map(this.mapEl, { zoom: 5, center: [104, 36], viewMode: '2D', mapStyle: 'amap://styles/normal', resizeEnable: true });
         this.map.on('click', function () { if (self.info) self.info.close(); });
+        setTimeout(function () { try { self.map && self.map.resize(); } catch (e) {} }, 200);
         if (this.results.length) this.addMarkers(this.results);
       },
       addMarkers: function (list) {
