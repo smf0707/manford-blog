@@ -215,8 +215,8 @@
 
     .t-item {
       display: flex;
-      gap: 12px;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
       padding: 12px 14px;
       background: #ffffff;
       color: #1d2433;
@@ -234,35 +234,33 @@
       transform: translateX(2px)
     }
 
-    .t-rank {
-      flex: 0 0 26px;
-      height: 26px;
-      line-height: 26px;
-      text-align: center;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 13px;
-      background: linear-gradient(135deg, var(--violet), #a06bff);
-      color: #fff;
-      font-family: var(--mono)
+    .t-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px
     }
 
-    .t-info {
-      flex: 1;
-      min-width: 0
+    .t-sub {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
     }
 
     .t-name {
+      flex: 1;
+      min-width: 0;
       font-size: 15px;
       font-weight: 600;
       color: #1f2733;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden
     }
 
     .t-city {
+      align-self: flex-start;
       font-size: 11px;
       color: rgba(45, 53, 77, .88);
       font-weight: 400;
@@ -275,7 +273,6 @@
     .t-desc {
       font-size: 12px;
       color: rgba(70, 80, 105, .92);
-      margin-top: 4px;
       line-height: 1.5;
       overflow: hidden;
       display: -webkit-box;
@@ -285,7 +282,6 @@
 
     .t-heat {
       flex: 0 0 auto;
-      margin-left: auto;
       display: flex;
       align-items: flex-start;
       line-height: 1.2
@@ -506,7 +502,7 @@
       <input id="tInput" class="t-in" type="text" placeholder="或输入 省份 / 市 / 区，如：广东、广东 广州、广州 番禺" />
       <button id="tGo" class="t-go">搜索</button>
     </div>
-    <div class="t-sub" id="tSub">全国最热门目的地</div>
+    <div class="t-subhead" id="tSub">全国最热门目的地</div>
     <div class="t-body">
       <div class="t-list" id="tList"></div>
       <div class="t-mapwrap">
@@ -635,10 +631,8 @@
           var pp = Travel.cleanName(d.prov);
           var tag = pp + '·' + d.city + (d.dist && d.dist !== d.city ? '·' + d.dist : '');
           return '<div class="t-item" data-i="' + i + '">'
-            + '<div class="t-rank">' + (i + 1) + '</div>'
-            + '<div class="t-info"><div class="t-name">' + d.name + ' <span class="t-city">' + tag + '</span></div>'
-            + '<div class="t-desc">' + d.desc + '</div></div>'
-            + '<div class="t-heat"><b>' + d.heat + '</b></div>'
+            + '<div class="t-main"><div class="t-name">' + d.name + '</div><div class="t-heat"><b>' + d.heat + '</b></div></div>'
+            + '<div class="t-sub"><span class="t-city">' + tag + '</span><div class="t-desc">' + d.desc + '</div></div>'
             + '</div>';
         }).join('');
         if (top.length > 10) {
